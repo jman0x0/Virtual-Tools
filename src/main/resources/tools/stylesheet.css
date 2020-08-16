@@ -1,0 +1,101 @@
+@font-face {
+    src: url("Tienne-Regular.otf");
+}
+
+#title {
+    -fx-font-weight: bold;
+    -fx-font-size: 2em;
+}
+
+#class {
+    -fx-font-weight: bold;
+    -fx-font-size: 2em;
+}
+
+#navigation {
+    -fx-background-color: linear-gradient(#2965cb, #2750b1);
+    -fx-font-family: "Tienne";
+    -fx-stroke: White;
+    -fx-fill: White;
+}
+
+#navigationList {
+    -fx-background-color: transparent;
+}
+
+#navigationList .list-cell {
+    -fx-font-family: "Tienne";
+    -fx-background-color: transparent;
+    -fx-font-size: 1.6em;
+    -fx-text-fill: White;
+}
+
+#navigationList .list-cell:hover {
+    -fx-background-color: #5f92f1;
+}
+
+#navigationList .list-cell:selected {
+    -fx-background-color: #4283f3;
+}
+
+
+.label {
+    -fx-text-fill: black;
+}
+
+#navigation > * > .label {
+    -fx-text-fill: White;
+}
+
+#navigation > * > * > .toggle-button,
+.combo-box {
+    -fx-background-color: #e1ecfd;
+}
+
+#navigation > * > * > .toggle-button:hover,
+.combo-box:hover {
+    -fx-background-color: #cbd9fd;
+}
+
+#navigation > * > * > .toggle-button:selected {
+    -fx-background-color: linear-gradient(#bbcdfc, #849bd5);
+}
+
+.toggle-button {
+
+}
+
+.toggle-button:selected {
+
+}
+
+.list-cell .label {
+    -fx-text-fill: Black;
+}
+
+.draggable {
+    -fx-max-width: infinity;
+    -fx-max-height: infinity;
+    -fx-font-size: 4em;
+    -fx-font-weight: bold;
+}
+
+.draggable:armed {
+    -fx-background-color: linear-gradient(#e0e0e0, #a8a8a8);
+}
+
+#picked {
+    -fx-border-color: #404040;
+    -fx-border-radius: 2px;
+    -fx-font-size: 2em;
+}
+
+#help {
+    -fx-background-color: transparent;
+}
+
+#help:hover {
+    -fx-cursor: hand;
+    -fx-scale-x: 1.0625;
+    -fx-scale-y: 1.0625;
+}

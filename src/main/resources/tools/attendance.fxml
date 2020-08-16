@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.Button?>
+
+<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@stylesheet.css" maxHeight="Infinity" maxWidth="Infinity">
+    <fx:define>
+        <FXCollections fx:id="names" fx:factory="observableArrayList"/>
+        <ToggleGroup fx:id="filter"/>
+    </fx:define>
+
+    <ListView fx:id="display" items="$names"/>
+    <HBox alignment="CENTER">
+        <ToggleButton fx:id="absent" toggleGroup="$filter" HBox.hgrow="ALWAYS" maxWidth="Infinity" selected="true">
+            Absent
+        </ToggleButton>
+        <ToggleButton fx:id="present" toggleGroup="$filter" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+            Present
+        </ToggleButton>
+    </HBox>
+    <Button fx:id="loadBox" VBox.vgrow="ALWAYS">
+        LOAD SHEET
+    </Button>
+</fx:root>
+

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.TextFlow?>
+
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<fx:root type="javafx.scene.layout.BorderPane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@stylesheet.css" maxHeight="Infinity" maxWidth="Infinity">
+    <top>
+        <TabPane style="-fx-font-size: 1.25em">
+            <tabs>
+                <Tab text="Classes" closable="false">
+                    <content>
+                        <VBox>
+                            <TextFlow>
+                                <Text text="The"/>
+                                <Text style="-fx-font-weight: bold" text=" Classes "/>
+                                <Text text="section is where classes can be added or removed."/>
+                            </TextFlow>
+                            <Label text="    •To add a class drag a roster file onto the &quot;Add Class&quot; area."/>
+                            <Label text="    •To remove a class click the Trash icon on the class you want to remove."/>
+                            <Label text="Note that class rosters will be saved upon closing the application. Additionally, previously added rosters will be loaded when the application starts up." wrapText="true" />
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab text="Picker" closable="false">
+                    <content>
+                        <VBox>
+                            <TextFlow>
+                                <Text text="The"/>
+                                <Text style="-fx-font-weight: bold" text=" Picker "/>
+                                <Text text="section is where students can be randomly picked."/>
+                            </TextFlow>
+                            <Label text="    •Make sure that you are picking students from the appropriate class."/>
+                            <Label text="        •Select the appropriate class with the ComboBox on the navigation bar."/>
+                            <Label text="    •To pick a student click the &quot;Pick Student&quot; button."/>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab text="Grouper" closable="false">
+                    <content>
+                        <VBox>
+                            <TextFlow>
+                                <Text text="The"/>
+                                <Text style="-fx-font-weight: bold" text=" Grouper "/>
+                                <Text text="section is where students can be grouped."/>
+                            </TextFlow>
+                            <Label text="    •Make sure that you are grouping students from the appropriate class."/>
+                            <Label text="        •Select the appropriate class with the ComboBox on the navigation bar."/>
+                            <Label text="    •Edit Student Count field to generate groups with N students."/>
+                            <Label text="    •Use the refresh icon to generate new groups."/>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab text="Attendance" closable="false">
+                    <content>
+                        <VBox>
+                            <TextFlow>
+                                <Text text="The"/>
+                                <Text style="-fx-font-weight: bold" text=" Attendance "/>
+                                <Text text="section is where attendance can be taken from Zoom log files."/>
+                            </TextFlow>
+                            <Label text="    •Make sure that you are taking attendance for the appropriate class."/>
+                            <Label text="        •Select the appropriate class with the ComboBox on the navigation bar."/>
+                            <Label text="    •To take attendance drop a Zoom CSV log onto the&quot;LOAD SHEET&quot; area."/>
+                            <Label text="    •Use the &quot;Absent&quot; and &quot;Present&quot; to change the filter."/>
+                        </VBox>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </top>
+    <bottom>
+        <HBox>
+            <Pane HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            <Button style="-fx-font-size: 1.25em" text="Close" onAction="#close">
+                <HBox.margin>
+                    <Insets right="4" bottom="4"/>
+                </HBox.margin>
+            </Button>
+        </HBox>
+    </bottom>
+</fx:root>

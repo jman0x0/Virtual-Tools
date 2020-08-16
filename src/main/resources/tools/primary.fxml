@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.geometry.Insets?>
+<?import java.lang.Integer?>
+<?import tools.NavigationData?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+
+<?import javafx.scene.control.Button?>
+<BorderPane xmlns="http://javafx.com/javafx/8.0.171" fx:id="borderPane" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@stylesheet.css" fx:controller="tools.PrimaryController">
+   <fx:define>
+      <FXCollections fx:id="navigationItems" fx:factory="observableArrayList">
+         <NavigationData value="Classes, list_32x32.png"/>
+         <NavigationData value="Picker, pointer_32x32.png"/>
+         <NavigationData value="Grouper, group_32x32.png"/>
+         <NavigationData value="Attendance, clipboard_32x32.png"/>
+      </FXCollections>
+      <ToggleGroup fx:id="order"/>
+      <Integer fx:value="168" fx:id="navigationWidth"/>
+      <Integer fx:value="40" fx:id="iconWidth"/>
+   </fx:define>
+   <left>
+      <VBox fx:id="navigation" prefWidth="$navigationWidth" spacing="10" maxHeight="Infinity">
+         <VBox alignment="TOP_CENTER" spacing="10">
+            <Label fx:id="title">Navigation</Label>
+            <Separator/>
+            <ListView fixedCellSize="48" fx:id="navigationList" items="$navigationItems" minHeight="194" prefHeight="194"/>
+         </VBox>
+         <VBox style="-fx-font-size: 1.5em" alignment="CENTER_LEFT" spacing="10">
+            <Label text="Class">
+               <VBox.margin>
+                  <Insets left="4"/>
+               </VBox.margin>
+            </Label>
+            <ComboBox style="-fx-font-size: 1em;" fx:id="classChoices" maxWidth="Infinity">
+               <VBox.margin>
+                  <Insets left="6" right="6"/>
+               </VBox.margin>
+            </ComboBox>
+            <Label text="Order">
+               <VBox.margin>
+                  <Insets left="4"/>
+               </VBox.margin>
+            </Label>
+            <HBox style="-fx-font-size: 1em;">
+               <ToggleButton toggleGroup="$order" fx:id="firstLast" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                  First, Last
+                  <HBox.margin>
+                     <Insets left="6"/>
+                  </HBox.margin>
+               </ToggleButton>
+               <ToggleButton toggleGroup="$order" fx:id="lastFirst" HBox.hgrow="ALWAYS" maxWidth="Infinity" selected="true">
+                  Last, First
+                  <HBox.margin>
+                     <Insets right="6"/>
+                  </HBox.margin>
+               </ToggleButton>
+            </HBox>
+         </VBox>
+         <Pane maxHeight="Infinity" VBox.vgrow="ALWAYS"/>
+         <VBox alignment="CENTER">
+            <Label id="title">
+               Help
+            </Label>
+            <Button fx:id="help" onAction="#displayHelp">
+               <graphic>
+                  <ImageView>
+                     <image>
+                        <Image url="@help.png"/>
+                     </image>
+                  </ImageView>
+               </graphic>
+               <VBox.margin>
+                  <Insets bottom="8"/>
+               </VBox.margin>
+            </Button>
+         </VBox>
+      </VBox>
+   </left>
+</BorderPane>
