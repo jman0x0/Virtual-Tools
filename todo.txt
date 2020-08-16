@@ -1,0 +1,6 @@
+Remove Middle names
+Manual attendance checking
+Editable lists
+Add subwindow for classes
+Force check for grouping
+Orderable classes
