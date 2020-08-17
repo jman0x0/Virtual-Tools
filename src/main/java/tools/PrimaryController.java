@@ -112,6 +112,13 @@ public class PrimaryController {
         classChoices.getItems().remove(name);
     }
 
+    public void updateClass(String old, String current) {
+        final int index = classChoices.getItems().indexOf(old);
+        if (index >= 0) {
+            classChoices.getItems().set(index, current);
+        }
+    }
+
     public String getActiveClass() {
         return classChoices.getSelectionModel().getSelectedItem();
     }

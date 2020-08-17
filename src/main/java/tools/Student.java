@@ -1,14 +1,14 @@
 package tools;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Student {
-    private final HashSet<String> firstNames = new HashSet<>();
-    private final HashSet<String> lastNames  = new HashSet<>();
+    private final ArrayList<String> firstNames = new ArrayList<>();
+    private final ArrayList<String> lastNames  = new ArrayList<>();
     private String fullName;
 
     public Student(String fullName) throws IllegalArgumentException {
@@ -21,13 +21,13 @@ public class Student {
 
         StringBuilder realName = new StringBuilder();
         int active = 0;
-        for (HashSet<String> category : list) {
+        for (var category : list) {
             final String  data = split[active++];
             final Matcher matcher = pattern.matcher(data);
 
             boolean separate = false;
             while (matcher.find()) {
-                category.add(matcher.group(0).toLowerCase());
+                category.add(matcher.group(0));
                 realName.append(matcher.group(0));
                 realName.append(" ");
             }
@@ -41,11 +41,11 @@ public class Student {
     }
 
     public boolean firstMatches(String name) {
-        return firstNames.contains(name.toLowerCase());
+        return firstNames.stream().anyMatch(name::equalsIgnoreCase);
     }
 
     public boolean lastMatches(String name) {
-        return lastNames.contains(name.toLowerCase());
+        return lastNames.stream().anyMatch(name::equalsIgnoreCase);
     }
 
     public String getFullName() {
@@ -53,7 +53,18 @@ public class Student {
     }
 
     public String getReversed() {
-        return Utilities.reverseName(fullName);
+        return Utilities.reverseName(getFullName());
+    }
+
+    public String getLastFirst() {
+        if (firstNames.size() == 0 || lastNames.size() == 0) {
+            return fullName;
+        }
+        return lastNames.get(0) + ',' + firstNames.get(0);
+    }
+
+    public String getFirstLast() {
+        return Utilities.reverseName(getLastFirst());
     }
 
     @Override

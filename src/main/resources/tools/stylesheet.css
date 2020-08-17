@@ -74,9 +74,7 @@
 }
 
 .draggable {
-    -fx-max-width: infinity;
-    -fx-max-height: infinity;
-    -fx-font-size: 4em;
+    -fx-font-size: 1em;
     -fx-font-weight: bold;
 }
 
@@ -98,4 +96,13 @@
     -fx-cursor: hand;
     -fx-scale-x: 1.0625;
     -fx-scale-y: 1.0625;
+}
+
+#navigation .combo-box {
+    -fx-font-size: 1em;
+}
+
+#navigation .combo-box-popup .list-view
+{
+    -fx-font-size: 15px;
 }

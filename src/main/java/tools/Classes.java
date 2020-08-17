@@ -14,9 +14,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Classes extends BorderPane {
     @FXML
@@ -62,9 +60,17 @@ public class Classes extends BorderPane {
             @Override
             public void onChanged(Change<? extends String> change) {
                 while (change.next()) {
-                    for (String value : change.getRemoved()) {
-                        CLASS_INFO.remove(value);
-                        controller.removeClass(value);
+                    final var removed = change.getRemoved();
+                    final var added = change.getAddedSubList();
+                    for (int i = 0; i < removed.size(); ++i) {
+                        if (change.wasReplaced()) {
+                            CLASS_INFO.put(added.get(i), CLASS_INFO.remove(removed.get(i)));
+                            controller.updateClass(removed.get(i), added.get(i));
+                        }
+                        else {
+                            CLASS_INFO.remove(removed.get(i));
+                            controller.removeClass(removed.get(i));
+                        }
                     }
                 }
             }
@@ -131,6 +137,10 @@ public class Classes extends BorderPane {
             return;
         }
         final var studentInfo = CLASS_INFO.get(current);
+        if (studentInfo == null) {
+            return;
+        }
+
         students.clear();
         for (var value : studentInfo) {
             if (controller.getOrder() == PrimaryController.Order.FIRST_LAST) {
@@ -140,6 +150,14 @@ public class Classes extends BorderPane {
                 students.add(value.toString());
             }
         }
+        Collections.sort(students, new Comparator<String>() {
+            @Override
+            public int compare(String lhsName, String rhsName) {
+                final String[] lhs = Utilities.extractWords(lhsName);
+                final String[] rhs = Utilities.extractWords(rhsName);
+                return Arrays.compare(lhs, rhs);
+            }
+        });
     }
 
     private void dragDropped(DragEvent drag) {

@@ -17,10 +17,10 @@
         <HBox>
             <TitledPane collapsible="false" text="Classes" maxWidth="Infinity" HBox.hgrow="ALWAYS" maxHeight="Infinity">
                 <VBox>
-                    <ListView fx:id="classDisplay" items="$classes" VBox.vgrow="ALWAYS">
+                    <ListView fx:id="classDisplay" items="$classes" VBox.vgrow="ALWAYS" editable="true">
 
                     </ListView>
-                    <Button fx:id="addStudent" minHeight="64" maxWidth="Infinity">
+                    <Button fx:id="addStudent" style="-fx-font-size: 2em" minHeight="32" maxWidth="Infinity">
                         Add Class
                     </Button>
                 </VBox>

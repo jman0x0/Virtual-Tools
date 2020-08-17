@@ -43,7 +43,7 @@
                   <Insets left="4"/>
                </VBox.margin>
             </Label>
-            <ComboBox style="-fx-font-size: 1em;" fx:id="classChoices" maxWidth="Infinity">
+            <ComboBox fx:id="classChoices" maxWidth="Infinity">
                <VBox.margin>
                   <Insets left="6" right="6"/>
                </VBox.margin>

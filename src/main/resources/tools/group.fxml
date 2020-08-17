@@ -33,7 +33,7 @@
             <Label>
                 Student Count
             </Label>
-            <Spinner fx:id="studentCount" maxWidth="Infinity">
+            <Spinner fx:id="studentCount" maxWidth="Infinity" editable="true">
                 <valueFactory>
                     <SpinnerValueFactory.IntegerSpinnerValueFactory min="1" max="10"/>
                 </valueFactory>
