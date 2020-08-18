@@ -14,11 +14,11 @@
 <?import javafx.scene.layout.StackPane?>
 <fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@stylesheet.css" maxHeight="Infinity" maxWidth="Infinity">
     <fx:define>
-        <FXCollections fx:id="names" fx:factory="observableArrayList"/>
+        <FXCollections fx:id="students" fx:factory="observableArrayList"/>
         <ToggleGroup fx:id="filter"/>
     </fx:define>
     <VBox VBox.vgrow="ALWAYS">
-        <ListView fx:id="display" items="$names" VBox.vgrow="ALWAYS"/>
+        <ListView fx:id="display" items="$students" VBox.vgrow="ALWAYS"/>
         <HBox alignment="CENTER">
             <ToggleButton fx:id="complete" toggleGroup="$filter" HBox.hgrow="ALWAYS" maxWidth="Infinity" selected="true">
                 Complete
@@ -36,11 +36,9 @@
             </VBox.margin>
             <HBox StackPane.alignment="BOTTOM_CENTER">
                 <Label text="Loaded sheet: "/>
-                <TextField HBox.hgrow="ALWAYS" editable="false">
-
-                </TextField>
+                <TextField fx:id="loaded" HBox.hgrow="ALWAYS" editable="false"/>
             </HBox>
-            <Button StackPane.alignment="CENTER_RIGHT" fx:id="loadBox">
+            <Button StackPane.alignment="CENTER_RIGHT" fx:id="loadBox" onAction="#loadSheet">
                 Load...
             </Button>
         </StackPane>

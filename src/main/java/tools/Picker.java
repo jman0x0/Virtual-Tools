@@ -65,7 +65,7 @@ public class Picker extends VBox {
             SHUFFLED = new ArrayList<>(Classes.CLASS_INFO.get(active));
         }
         else {
-            SHUFFLED = Attendance.getRoster(controller, true);
+            SHUFFLED = Attendance.getRoster(controller, Attendance.Filter.PRESENT);
         }
         Collections.shuffle(SHUFFLED);
     }

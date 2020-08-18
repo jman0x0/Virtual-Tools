@@ -124,7 +124,7 @@ public class Group extends VBox {
             return new ArrayList<>(Classes.CLASS_INFO.get(controller.getActiveClass()));
         }
         else {
-            return Attendance.getRoster(controller, true);
+            return Attendance.getRoster(controller, Attendance.Filter.PRESENT);
         }
     }
 }

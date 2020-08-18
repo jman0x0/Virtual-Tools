@@ -76,13 +76,9 @@ public class Classes extends BorderPane {
             }
         });
 
-        Draggable.initialize(addStudent);
-        addStudent.setOnDragDropped(this::dragDropped);
-
         controller.listenToOrderChange((observableValue, toggle, t1) -> {
             updateStudents();
         });
-
         for (var entry : CLASS_INFO.entrySet()) {
             classes.add(entry.getKey());
         }
@@ -160,15 +156,15 @@ public class Classes extends BorderPane {
         });
     }
 
-    private void dragDropped(DragEvent drag) {
-        final Dragboard dragboard = drag.getDragboard();
-        final boolean success = dragboard.hasFiles();
-        if (success) {
-            for (File file : dragboard.getFiles()) {
+    @FXML
+    public void addClasses() {
+        final LoadFiles loader = new LoadFiles(true);
+        loader.display(App.STAGE_STACK.peek());
+        final File[] chosen = loader.getFiles();
+        if (chosen != null) {
+            for (File file : chosen) {
                 loadRoster(file);
             }
         }
-        drag.setDropCompleted(success);
-        Draggable.dragExited(drag, addStudent);
     }
 }

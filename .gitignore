@@ -2,3 +2,4 @@ target/
 configuration.json
 .idea/
 *.iml
+ideas.txt
