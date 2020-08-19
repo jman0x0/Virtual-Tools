@@ -9,35 +9,39 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.StackPane?>
+<?import tools.AnimatedImageView?>
 
 <fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@stylesheet.css" maxHeight="Infinity" maxWidth="Infinity">
     <TitledPane text="Picker" collapsible="false" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="ALWAYS">
         <VBox.margin>
             <Insets topRightBottomLeft="8"/>
         </VBox.margin>
-        <VBox fx:id="picker" alignment="CENTER">
-            <Label fx:id="picked" alignment="CENTER" maxWidth="Infinity">
-                <VBox.margin>
-                    <Insets top="16" left="32" right="32" bottom="16"/>
-                </VBox.margin>
-            </Label>
-            <ImageView>
-                <image>
-                    <Image url="@black_top_hat.png"/>
-                </image>
-            </ImageView>
-            <Button style="-fx-font-size: 2em;" text="Pick Student" onAction="#pickStudent">
-                <VBox.margin>
-                    <Insets top="24" bottom="8"/>
-                </VBox.margin>
-            </Button>
-            <HBox alignment="CENTER">
-                <ToggleButton fx:id="present" HBox.hgrow="ALWAYS" maxWidth="Infinity" selected="true">
-                    Present
-                </ToggleButton>
-            </HBox>
-        </VBox>
+        <StackPane>
+            <VBox fx:id="picker" alignment="CENTER">
+                <Label fx:id="picked" alignment="CENTER" maxWidth="Infinity">
+                    <VBox.margin>
+                        <Insets left="32" right="32" bottom="32"/>
+                    </VBox.margin>
+                </Label>
+                <ImageView fx:id="hat">
+                    <image>
+                        <Image url="@black_top_hat.png"/>
+                    </image>
+                </ImageView>
+                <Button style="-fx-font-size: 2em;" text="Pick Student" onAction="#pickStudent">
+                    <VBox.margin>
+                        <Insets top="24" bottom="8"/>
+                    </VBox.margin>
+                </Button>
+                <HBox alignment="CENTER">
+                    <ToggleButton fx:id="present" HBox.hgrow="ALWAYS" maxWidth="Infinity" selected="true">
+                        Present
+                    </ToggleButton>
+                </HBox>
+            </VBox>
+            <AnimatedImageView fx:id="gifView"/>
+        </StackPane>
     </TitledPane>
 </fx:root>
 

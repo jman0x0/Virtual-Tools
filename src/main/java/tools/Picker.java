@@ -1,26 +1,42 @@
 package tools;
 
 
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
+import javafx.animation.ScaleTransition;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class Picker extends VBox {
     @FXML
+    private ImageView hat;
+
+    @FXML
     private Label picked;
 
     @FXML
     private ToggleButton present;
+
+    @FXML
+    private AnimatedImageView gifView;
 
     private static Student ACTIVE = null;
 
     private static ArrayList<Student> SHUFFLED = new ArrayList<>();
 
     private final PrimaryController controller;
+
+    private boolean animating = false;
 
     public Picker(PrimaryController controller) {
         this.controller = controller;
@@ -42,18 +58,67 @@ public class Picker extends VBox {
             restock();
             pickStudent();
         });
+        gifView.setPathway("confetti/confetti-");
+
     }
 
     @FXML
     private void pickStudent() {
+        if (animating) {
+            return;
+        }
         if (SHUFFLED.isEmpty()) {
             restock();
         }
-        // Restocking might not be successful
+        animating = true;
+        final int cycles = 10;
+        final double angle = 30.0;
+        final Duration duration = Duration.seconds(.25);
+        final RotateTransition rotate = new RotateTransition();
+        rotate.setFromAngle(-angle);
+        rotate.setToAngle(angle);
+        rotate.setDuration(duration);
+        rotate.setAutoReverse(true);
+        rotate.setCycleCount(cycles);
+        rotate.setNode(hat);
+        final ScaleTransition scale = new ScaleTransition();
+        scale.setFromY(.95);
+        scale.setInterpolator(new Interpolator() {
+            @Override
+            protected double curve(double t) {
+                return -0.5 * (Math.cos(t * Math.PI) - 1);
+            }
+        });
+        scale.setToY(1.05);
+        scale.setFromX(.9);
+        scale.setToX(1.1);
+        scale.setDuration(duration);
+        scale.setAutoReverse(true);
+        scale.setCycleCount(cycles);
+        scale.setNode(hat);
+
+        rotate.play();
+        scale.play();
+        rotate.setOnFinished(actionEvent -> {
+            final RotateTransition finish = new RotateTransition();
+            finish.setFromAngle(-angle);
+            finish.setToAngle(0);
+            finish.setDuration(duration.divide(2));
+            finish.setNode(hat);
+            finish.play();
+            finish.setOnFinished(this::finalizePick);
+        });
+
+    }
+
+    private void finalizePick(ActionEvent actionEvent) {
+        gifView.play();
+        gifView.setTranslateY(-240);
         if (!SHUFFLED.isEmpty()) {
             final Student student = SHUFFLED.remove(SHUFFLED.size() - 1);
             setStudent(student);
         }
+        animating = false;
     }
 
     private void restock() {
