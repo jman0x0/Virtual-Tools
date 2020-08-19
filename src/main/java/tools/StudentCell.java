@@ -19,10 +19,10 @@ public class StudentCell extends CheckBoxListCell<Student> {
             setText(null);
         }
         else if (controller.getOrder() == PrimaryController.Order.FIRST_LAST) {
-            setText(data.getReversed());
+            setText(data.getFirstLast());
         }
         else {
-            setText(data.toString());
+            setText(data.getLastFirst());
         }
     }
 }

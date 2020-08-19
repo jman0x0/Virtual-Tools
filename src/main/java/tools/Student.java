@@ -60,7 +60,7 @@ public class Student {
         if (firstNames.size() == 0 || lastNames.size() == 0) {
             return fullName;
         }
-        return lastNames.get(0) + ',' + firstNames.get(0);
+        return lastNames.get(0) + ", " + firstNames.get(0);
     }
 
     public String getFirstLast() {

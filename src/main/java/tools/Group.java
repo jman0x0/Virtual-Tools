@@ -63,8 +63,7 @@ public class Group extends VBox {
         if (active == null) {
             return;
         }
-        final var students = new ArrayList<>(Classes.CLASS_INFO.get(active));
-        final int count = students.size();
+        final int count = controller.getActiveClassroom().size();
         final int maxStudents = count / 2 + count % 2;
         final int studentValue = studentCount.getValue();
         studentCount.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, maxStudents, studentValue));
@@ -121,10 +120,10 @@ public class Group extends VBox {
 
     private ArrayList<Student> getActiveStudents() {
         if (!present.isSelected()) {
-            return new ArrayList<>(Classes.CLASS_INFO.get(controller.getActiveClass()));
+            return controller.getActiveClassroom().getAttendanceSheet().getRoster(AttendanceSheet.Filter.COMPLETE);
         }
         else {
-            return Attendance.getRoster(controller, Attendance.Filter.PRESENT);
+            return controller.getActiveClassroom().getAttendanceSheet().getRoster(AttendanceSheet.Filter.PRESENT);
         }
     }
 }

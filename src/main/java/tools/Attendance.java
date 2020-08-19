@@ -17,24 +17,6 @@ import java.io.IOException;
 import java.util.*;
 
 public class Attendance extends VBox {
-    public enum Filter {
-        COMPLETE,
-        ABSENT,
-        PRESENT;
-
-        public static Filter fromToggleGroup(ToggleGroup group, ToggleButton complete, ToggleButton present, ToggleButton absent) {
-            if (group.getSelectedToggle() == complete) {
-                return COMPLETE;
-            }
-            else if (group.getSelectedToggle() == present) {
-                return PRESENT;
-            }
-            else {
-                return ABSENT;
-            }
-        }
-    }
-
     @FXML
     private ObservableList<Student> students;
 
@@ -59,7 +41,7 @@ public class Attendance extends VBox {
     @FXML
     private ToggleButton absent;
 
-    private static final Map<String, Map<Student, SimpleBooleanProperty>> CLASS_MAP = new HashMap<>();
+    private AttendanceSheet sheet;
 
     private static final ArrayList<String> NAME_LIST = new ArrayList<>();
 
@@ -80,33 +62,21 @@ public class Attendance extends VBox {
             updateNames();
         }
         display.setEditable(true);
-        updateAttendanceMap();
         final Callback<Student, ObservableValue<Boolean>> itemToBoolean = (Student student) -> {
-            final String active = controller.getActiveClass();
-            if (active == null) {
-                return null;
-            }
-            return CLASS_MAP.get(active).get(student);
+            return sheet == null ? null : sheet.get(student);
         };
-        display.setCellFactory(factory -> new StudentCell(itemToBoolean, controller));
-        updateNames();
-    }
-
-    public Attendance(PrimaryController controller) {
-        this.controller = controller;
-        Utilities.loadController(this, "attendance.fxml");
-        this.controller.listenToClassChange((observableValue, old, current) -> {
-            updateAttendanceMap();
+        controller.listenToClassChange((observableValue, old, current) -> {
+            sheet = controller.getActiveClassroom().getAttendanceSheet();
             updateNames();
         });
-        this.controller.listenToOrderChange((observableValue, old, current) -> {
+        controller.listenToOrderChange((observableValue, old, current) -> {
             final HashMap<Student, String[]> names = new HashMap<>();
             for (var student : students) {
                 if (controller.getOrder() == PrimaryController.Order.FIRST_LAST) {
-                    names.put(student, Utilities.extractWords(student.getReversed()));
+                    names.put(student, Utilities.extractWords(student.getFirstLast()));
                 }
                 else {
-                    names.put(student, Utilities.extractWords(student.toString()));
+                    names.put(student, Utilities.extractWords(student.getLastFirst()));
                 }
             }
             Collections.sort(students, new Comparator<Student>() {
@@ -116,19 +86,22 @@ public class Attendance extends VBox {
                 }
             });
         });
+        display.setCellFactory(factory -> new StudentCell(itemToBoolean, controller));
+        updateNames();
+    }
+
+    public Attendance(PrimaryController controller, AttendanceSheet sheet) {
+        this.controller = controller;
+        this.sheet = sheet;
+        Utilities.loadController(this, "attendance.fxml");
     }
 
     public void updateAttendanceSheet() {
-        final String className = controller.getActiveClass();
-        if (className == null) {
-            return;
-        }
-        final var sheet = CLASS_MAP.get(className);
-        final var setting = Filter.fromToggleGroup(filter, complete, present, absent);
-        final var roster = Classes.CLASS_INFO.get(className);
+        final var setting = AttendanceSheet.Filter.fromToggleGroup(filter, complete, present, absent);
+        final var roster  = sheet.getRoster(AttendanceSheet.Filter.COMPLETE);
         for (String fullName : NAME_LIST) {
             final String[] split = Utilities.extractWords(fullName);
-            processName(split, roster, sheet, setting);
+            processName(split, roster, setting);
         }
     }
 
@@ -167,24 +140,13 @@ public class Attendance extends VBox {
         }
     }
 
-    public void updateAttendanceMap() {
-        final String className = controller.getActiveClass();
-        if (className == null) {
-            return;
-        }
-        final var presentMap = CLASS_MAP.computeIfAbsent(className, map -> new HashMap<>());
-        for (var student : Classes.CLASS_INFO.get(className)) {
-            presentMap.computeIfAbsent(student, map -> {
-                final var property = new SimpleBooleanProperty(false);
-                property.addListener((observableValue, old, checked) -> {
-                    final var setting = Filter.fromToggleGroup(filter, complete, present, absent);
-                    if (checked && setting == Filter.ABSENT || !checked && setting == Filter.PRESENT) {
-                        students.remove(student);
-                    }
-                });
-                return property;
-            });
-        }
+    public void attachListeners() {
+        sheet.setOnStudentMarked((student, checked) -> {
+            final var setting = AttendanceSheet.Filter.fromToggleGroup(filter, complete, present, absent);
+            if (checked && setting == AttendanceSheet.Filter.ABSENT || !checked && setting == AttendanceSheet.Filter.PRESENT) {
+                students.remove(student);
+            }
+        });
     }
 
     @FXML
@@ -199,9 +161,12 @@ public class Attendance extends VBox {
     }
 
     public void updateNames() {
+        if (sheet == null) {
+            return;
+        }
         clearDisplay();
-        final var setting = Filter.fromToggleGroup(filter, complete, present, absent);
-        final var roster = getRoster(controller, setting);
+        final var setting = AttendanceSheet.Filter.fromToggleGroup(filter, complete, present, absent);
+        final var roster = sheet.getRoster(setting);
         if (roster != null) {
             students.addAll(roster);
         }
@@ -211,24 +176,7 @@ public class Attendance extends VBox {
         students.clear();
     }
 
-    public static ArrayList<Student> getRoster(PrimaryController controller, Filter filter) {
-        final String className = controller.getActiveClass();
-        if (className == null) {
-            return null;
-        }
-        final var roster = Classes.CLASS_INFO.get(className);
-        final ArrayList<Student> marked = new ArrayList<>();
-        final var presentMap = CLASS_MAP.get(className);
-        for (var student : roster) {
-            final var present = presentMap.get(student).getValue();
-            if (filter == Filter.COMPLETE || !present && filter == Filter.ABSENT || present && filter == Filter.PRESENT) {
-                marked.add(student);
-            }
-        }
-        return marked;
-    }
-
-    public static void processName(String[] split, ArrayList<Student> roster, Map<Student, SimpleBooleanProperty> sheet, Filter filter) {
+    public void processName(String[] split, ArrayList<Student> roster, AttendanceSheet.Filter filter) {
         final String[] reversed = Arrays.copyOf(split, split.length);
         Utilities.reverseArray(reversed);
 

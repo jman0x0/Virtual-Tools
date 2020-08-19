@@ -32,17 +32,13 @@ public class Classes extends BorderPane {
     @FXML
     private Button addStudent;
 
-    private PrimaryController controller;
+    private final PrimaryController controller;
 
-    protected static final Map<String, ArrayList<Student>> CLASS_INFO = new LinkedHashMap<>();
+    private Classroom classroom;
 
     public Classes(PrimaryController controller) {
         this.controller = controller;
         Utilities.loadController(this, "classes.fxml");
-    }
-
-    public Classes() {
-        this(null);
     }
 
     @FXML
@@ -53,7 +49,12 @@ public class Classes extends BorderPane {
                 return new RemovableCell();
             }
         });
+        updateStudents();
         classDisplay.getSelectionModel().selectedItemProperty().addListener((observableValue, old, current) -> {
+            classroom = controller.getClassroom(current);
+            updateStudents();
+        });
+        controller.listenToOrderChange((observableValue, toggle, t1) -> {
             updateStudents();
         });
         classDisplay.getItems().addListener(new ListChangeListener<String>() {
@@ -64,24 +65,16 @@ public class Classes extends BorderPane {
                     final var added = change.getAddedSubList();
                     for (int i = 0; i < removed.size(); ++i) {
                         if (change.wasReplaced()) {
-                            CLASS_INFO.put(added.get(i), CLASS_INFO.remove(removed.get(i)));
                             controller.updateClass(removed.get(i), added.get(i));
                         }
                         else {
-                            CLASS_INFO.remove(removed.get(i));
                             controller.removeClass(removed.get(i));
                         }
                     }
                 }
             }
         });
-
-        controller.listenToOrderChange((observableValue, toggle, t1) -> {
-            updateStudents();
-        });
-        for (var entry : CLASS_INFO.entrySet()) {
-            classes.add(entry.getKey());
-        }
+        classes.addAll(controller.getClassSet());
         if (!classes.isEmpty() && classDisplay.getSelectionModel().getSelectedItem() == null) {
             classDisplay.getSelectionModel().select(0);
         }
@@ -103,9 +96,8 @@ public class Classes extends BorderPane {
                     //iae.printStackTrace();
                 }
             }
-
-            if (CLASS_INFO.put(name, students) == null) {
-                controller.addClass(name);
+            if (controller.addClass(name) == null) {
+                controller.getClassroom(name).setStudents(students);
                 classes.add(name);
             }
         }
@@ -127,18 +119,11 @@ public class Classes extends BorderPane {
     }
 
     public void updateStudents() {
-        final var current = classDisplay.getSelectionModel().getSelectedItem();
-        if (current == null) {
-            students.clear();
-            return;
-        }
-        final var studentInfo = CLASS_INFO.get(current);
-        if (studentInfo == null) {
-            return;
-        }
-
         students.clear();
-        for (var value : studentInfo) {
+        if (classroom == null) {
+            return;
+        }
+        for (var value : classroom) {
             if (controller.getOrder() == PrimaryController.Order.FIRST_LAST) {
                 students.add(value.getReversed());
             }
@@ -146,13 +131,10 @@ public class Classes extends BorderPane {
                 students.add(value.toString());
             }
         }
-        Collections.sort(students, new Comparator<String>() {
-            @Override
-            public int compare(String lhsName, String rhsName) {
-                final String[] lhs = Utilities.extractWords(lhsName);
-                final String[] rhs = Utilities.extractWords(rhsName);
-                return Arrays.compare(lhs, rhs);
-            }
+        students.sort((String lhsName, String rhsName) -> {
+            final String[] lhs = Utilities.extractWords(lhsName);
+            final String[] rhs = Utilities.extractWords(rhsName);
+            return Arrays.compare(lhs, rhs);
         });
     }
 
@@ -165,6 +147,7 @@ public class Classes extends BorderPane {
             for (File file : chosen) {
                 loadRoster(file);
             }
+            updateStudents();
         }
     }
 }

@@ -33,14 +33,6 @@ class RemovableCell extends ListCell<String> {
             }
         });
 
-        textField.focusedProperty().addListener((observableValue, old, focused) -> {
-            if (!focused) {
-                var text = textField.getText();
-                startEdit();
-                commitEdit(text);
-            }
-        });
-
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {

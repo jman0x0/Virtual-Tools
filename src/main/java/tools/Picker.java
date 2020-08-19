@@ -57,15 +57,15 @@ public class Picker extends VBox {
     }
 
     private void restock() {
-        final String active = controller.getActiveClass();
-        if (active == null) {
+        final var classroom = controller.getActiveClassroom();
+        if (classroom == null) {
             return;
         }
         if (!present.isSelected()) {
-            SHUFFLED = new ArrayList<>(Classes.CLASS_INFO.get(active));
+            SHUFFLED = new ArrayList<>(classroom.getStudents());
         }
         else {
-            SHUFFLED = Attendance.getRoster(controller, Attendance.Filter.PRESENT);
+            SHUFFLED = classroom.getAttendanceSheet().getRoster(AttendanceSheet.Filter.PRESENT);
         }
         Collections.shuffle(SHUFFLED);
     }
@@ -74,10 +74,10 @@ public class Picker extends VBox {
         ACTIVE = student;
 
         if (controller.getOrder() == PrimaryController.Order.FIRST_LAST) {
-            picked.setText(student.getReversed());
+            picked.setText(student.getFirstLast());
         }
         else {
-            picked.setText(student.toString());
+            picked.setText(student.getLastFirst());
         }
     }
 }
