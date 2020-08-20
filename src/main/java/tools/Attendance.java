@@ -161,6 +161,12 @@ public class Attendance extends VBox {
         }
     }
 
+    @FXML
+    public void clearAttendance() {
+        sheet.clear();
+        display.refresh();
+    }
+
     public void updateNames() {
         if (sheet == null) {
             return;
