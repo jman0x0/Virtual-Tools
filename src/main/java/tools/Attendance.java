@@ -66,7 +66,8 @@ public class Attendance extends VBox {
             return sheet == null ? null : sheet.get(student);
         };
         controller.listenToClassChange((observableValue, old, current) -> {
-            sheet = controller.getActiveClassroom().getAttendanceSheet();
+            final var classroom = controller.getActiveClassroom();
+            sheet = classroom == null ? null : classroom.getAttendanceSheet();
             updateNames();
         });
         controller.listenToOrderChange((observableValue, old, current) -> {

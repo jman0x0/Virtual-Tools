@@ -5,18 +5,43 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.function.Function;
 
 public class Group extends VBox {
-    static class Grouping {
+    static class TableGroup {
         public final ArrayList<String> names = new ArrayList<>();
 
         public final int groupNumber;
 
-        public Grouping(int groupNumber) {
+        public TableGroup(int groupNumber) {
             this.groupNumber = groupNumber;
+        }
+    }
+
+    static class Grouping {
+        private final double score;
+
+        private final int[] groups;
+
+        public Grouping() {
+            this(Integer.MAX_VALUE, null);
+        }
+
+        public Grouping(double score, int[] groups) {
+            this.score  = score;
+            this.groups = groups;
+        }
+
+        public double getScore() {
+            return score;
+        }
+
+        public int[] getGroups() {
+            return groups;
         }
     }
 
@@ -24,13 +49,19 @@ public class Group extends VBox {
     private Spinner<Integer> studentCount;
 
     @FXML
-    private TableView<Grouping> groups;
+    private TableView<TableGroup> groups;
 
     @FXML
     private Button refresh;
 
     @FXML
+    private RadioButton balanceGroups;
+
+    @FXML
     private ToggleButton present;
+
+    @FXML
+    private CheckBox balance;
 
     private final PrimaryController controller;
 
@@ -71,48 +102,40 @@ public class Group extends VBox {
 
     @FXML
     private void refreshTable() {
-        final String active = controller.getActiveClass();
-        if (active == null) {
-            return;
-        }
-        final var students = getActiveStudents();
-        Collections.shuffle(students);
+        final var students = getGroups();
         groups.getColumns().clear();
         groups.getItems().clear();
+        if (students.isEmpty()) {
+            return;
+        }
+        final int columns = Collections.max(students, Comparator.comparingInt(ArrayList::size)).size();
 
-        final int groupSize = studentCount.getValue();
-
-        final TableColumn<Grouping, String> groupColumn = new TableColumn<>("Group #");
+        final TableColumn<TableGroup, String> groupColumn = new TableColumn<>("Group #");
         groupColumn.setEditable(true);
-        groupColumn.setCellValueFactory(cell -> new SimpleStringProperty(" Group " + cell.getValue().groupNumber));
+        groupColumn.setCellValueFactory(cell -> new SimpleStringProperty(" Group " + (cell.getValue().groupNumber + 1)));
         groups.getColumns().add(groupColumn);
-        for (int i = 0; i < groupSize; ++i) {
+        for (int i = 0; i < columns; ++i) {
             final int index = i;
-            final TableColumn<Grouping, String> column = new TableColumn<>("P" + i);
+            final TableColumn<TableGroup, String> column = new TableColumn<>("Person " + (i + 1));
             column.setCellValueFactory((cell) -> {
                 final var names = cell.getValue().names;
                 if (index >= names.size()) {
                     return new SimpleStringProperty();
                 }
                 else if (controller.getOrder() == PrimaryController.Order.FIRST_LAST) {
-                    return new SimpleStringProperty(names.get(index));
+                    return new SimpleStringProperty(Utilities.reverseName(names.get(index)));
                 }
                 else {
-                    return new SimpleStringProperty(Utilities.reverseName(names.get(index)));
+                    return new SimpleStringProperty(names.get(index));
                 }
             });
             groups.getColumns().add(column);
         }
 
-        final int studentCount = students.size();
-        final int extra = studentCount % groupSize == 0 ? 0 : 1;
-        final int rows = studentCount / groupSize + extra;
-        for (int row = 0; row < rows; ++row) {
-            final int first = row * groupSize;
-            final int last = Math.min(students.size(), first + groupSize);
-            final Grouping grouping = new Grouping(row);
-            for (int i = first; i < last; ++i) {
-                grouping.names.add(students.get(i).toString());
+        for (int row = 0; row < students.size(); ++row) {
+            final TableGroup grouping = new TableGroup(row);
+            for (var student : students.get(row)) {
+                grouping.names.add(student.getLastFirst());
             }
             groups.getItems().add(grouping);
         }
@@ -125,5 +148,86 @@ public class Group extends VBox {
         else {
             return controller.getActiveClassroom().getAttendanceSheet().getRoster(AttendanceSheet.Filter.PRESENT);
         }
+    }
+
+    private ArrayList<ArrayList<Student>> getGroups() {
+        final var students = getActiveStudents();
+        Collections.shuffle(students);
+        final ArrayList<Function<Integer, Grouping>> methods = new ArrayList<>();
+        methods.add(this::packDefault);
+        if (balance.isSelected()) {
+            methods.add(this::packGreater);
+            methods.add(this::packLesser);
+        }
+
+        Grouping optimal = new Grouping();
+        for (var method : methods) {
+            final Grouping grouping = method.apply(students.size());
+            if (grouping != null && grouping.score < optimal.score) {
+                optimal = grouping;
+            }
+        }
+
+        final ArrayList<ArrayList<Student>> groups = new ArrayList<>();
+        int index = 0;
+        if (optimal.getGroups() != null) {
+            for (var columns : optimal.getGroups()) {
+                final ArrayList<Student> row = new ArrayList<>();
+                for (int i = 0; i < columns; ++i) {
+                    row.add(students.get(index + i));
+                }
+                groups.add(row);
+                index += columns;
+            }
+        }
+        return groups;
+    }
+
+    private Grouping packDefault(Integer count) {
+        final int target = studentCount.getValue();
+        final int groupCount = count / target;
+        final int remaining = count % target;
+        final double score = (double)target / remaining;
+        final int[] groups = new int[groupCount + (remaining > 0 ? 1 : 0)];
+        Arrays.fill(groups, 0, groupCount, target);
+        Arrays.fill(groups, groupCount, groups.length, remaining);
+        return new Grouping(score, groups);
+    }
+
+    private Grouping packLesser(Integer count) {
+        final int target = studentCount.getValue();
+        final int groupCount = count / target;
+        final int remaining = count % target;
+        if (groupCount == 0) {
+            return null;
+        }
+        final int added = (int)Math.round(groupCount * (target - remaining) / (double)(groupCount + 1));
+        final int min   = added % groupCount;
+        final int full  = added / groupCount;
+        final int slots = target - full;
+        final double score = Math.pow(((slots - 1)/(double)slots), min) * Math.pow(slots/(double)target, groupCount) * (remaining + added)/(double)target;
+        final int[] groups = new int[groupCount + 1];
+        Arrays.fill(groups, 0, groupCount-min, slots);
+        Arrays.fill(groups, groupCount-min, groupCount, slots - 1);
+        Arrays.fill(groups, groupCount, groups.length, remaining + added);
+        return new Grouping(1.0 / score, groups);
+    }
+
+    private Grouping packGreater(Integer count) {
+        final int target = studentCount.getValue();
+        final int groupCount = count / target;
+        final int remaining = count % target;
+        if (groupCount == 0) {
+            return null;
+        }
+        final int fullPacked = remaining / groupCount;
+        final int extra = remaining % groupCount;
+        final int filled = target + (int)fullPacked;
+        final double ratio = 1.0 + (double)fullPacked / target;
+        final double score = Math.pow(ratio, groupCount) * Math.pow((double)(filled + 1)/filled, extra);
+        final int[] groups = new int[groupCount];
+        Arrays.fill(groups, 0, extra, filled + 1);
+        Arrays.fill(groups, extra, groups.length, filled);
+        return new Grouping(score * 1.2, groups);
     }
 }

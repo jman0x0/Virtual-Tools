@@ -36,15 +36,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -181,7 +174,7 @@ public class JSONObject {
         // implementations to rearrange their items for a faster element 
         // retrieval based on associative access.
         // Therefore, an implementation mustn't rely on the order of the item.
-        this.map = new HashMap<String, Object>();
+        this.map = new LinkedHashMap<String, Object>();
     }
 
     /**

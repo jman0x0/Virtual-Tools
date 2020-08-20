@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.util.Callback;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -85,8 +85,18 @@ public class PrimaryController {
         return classes.keySet();
     }
 
+    public Classroom addClass(String name, Classroom classroom) {
+        classChoices.getItems().add(name);
+
+        if (classChoices.getSelectionModel().isEmpty()) {
+            classChoices.getSelectionModel().select(0);
+        }
+        return classes.put(name, classroom);
+    }
+
     public Classroom addClass(String name) {
         classChoices.getItems().add(name);
+
         if (classChoices.getSelectionModel().isEmpty()) {
             classChoices.getSelectionModel().select(0);
         }
@@ -128,7 +138,8 @@ public class PrimaryController {
         final int index = classChoices.getItems().indexOf(old);
         if (index >= 0) {
             classChoices.getItems().set(index, current);
-            classes.put(current, classes.remove(old));
+            final var removed = classes.remove(old);
+            classes.put(current, removed);
         }
     }
 
@@ -147,6 +158,15 @@ public class PrimaryController {
 
     public Classroom getActiveClassroom() {
         return classes.get(getActiveClass());
+    }
+
+    public void clearClassroom() {
+        classes.clear();
+        classChoices.getItems().clear();
+    }
+
+    public Set<Map.Entry<String, Classroom>> getClassroomEntries() {
+        return classes.entrySet();
     }
 
     public void load(String fileName) {

@@ -139,6 +139,16 @@ public class Classes extends BorderPane {
     }
 
     @FXML
+    public void moveUp() {
+        move(-1);
+    }
+
+    @FXML
+    public void moveDown() {
+        move(1);
+    }
+
+    @FXML
     public void addClasses() {
         final LoadFiles loader = new LoadFiles(true);
         loader.display(App.STAGE_STACK.peek());
@@ -149,5 +159,29 @@ public class Classes extends BorderPane {
             }
             updateStudents();
         }
+    }
+
+    private void move(int displacement) {
+        final int selection = classDisplay.getSelectionModel().getSelectedIndex();
+        if (selection >= 0 && displacement != 0) {
+            final ArrayList<Classroom> saved = new ArrayList<>();
+            for (var entry : controller.getClassroomEntries()) {
+                saved.add(entry.getValue());
+            }
+            final int next = Math.floorMod(selection + displacement, classes.size());
+            swapIndex(saved, selection, next);
+            swapIndex(classes, selection, next);
+            controller.clearClassroom();
+            for (var classroom : saved) {
+                controller.addClass(classroom.getName(), classroom);
+            }
+            classDisplay.getSelectionModel().select(next);
+        }
+    }
+
+    private <E> void swapIndex(List<E> list, int first, int last) {
+        final var temp = list.get(first);
+        list.set(first, list.get(last));
+        list.set(last, temp);
     }
 }

@@ -9,6 +9,8 @@
 <?import javafx.scene.control.TitledPane?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <fx:root type="javafx.scene.layout.BorderPane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@stylesheet.css" maxHeight="Infinity" maxWidth="Infinity">
     <fx:define>
         <FXCollections fx:id="classes" fx:factory="observableArrayList"/>
@@ -18,9 +20,19 @@
         <HBox>
             <TitledPane collapsible="false" text="Classes" maxWidth="Infinity" HBox.hgrow="ALWAYS" maxHeight="Infinity">
                 <VBox>
-                    <ListView fx:id="classDisplay" items="$classes" VBox.vgrow="ALWAYS" editable="true">
-
-                    </ListView>
+                    <ListView fx:id="classDisplay" items="$classes" VBox.vgrow="ALWAYS" editable="true"/>
+                    <GridPane>
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="50.0" percentWidth="50.0" prefWidth="50.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="50.0" percentWidth="50.0" prefWidth="50.0"/>
+                        </columnConstraints>
+                        <Button maxWidth="Infinity" onAction="#moveUp" GridPane.rowIndex="0" GridPane.columnIndex="0">
+                            Move Up
+                        </Button>
+                        <Button maxWidth="Infinity" onAction="#moveDown" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                            Move Down
+                        </Button>
+                    </GridPane>
                     <Button fx:id="addStudent" minHeight="32" maxWidth="Infinity" onAction="#addClasses">
                         Add Classes
                     </Button>
@@ -28,9 +40,7 @@
             </TitledPane>
             <TitledPane collapsible="false" text="Students" maxWidth="Infinity" HBox.hgrow="ALWAYS" maxHeight="Infinity">
                 <VBox>
-                    <ListView fx:id="studentDisplay" items="$students" VBox.vgrow="ALWAYS">
-
-                    </ListView>
+                    <ListView fx:id="studentDisplay" items="$students" VBox.vgrow="ALWAYS"/>
                 </VBox>
             </TitledPane>
         </HBox>
