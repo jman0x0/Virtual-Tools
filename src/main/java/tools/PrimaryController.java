@@ -174,20 +174,24 @@ public class PrimaryController {
             if (!new File(fileName).exists()) {
                 return;
             }
-            final String data = Files.readString(Paths.get(fileName));
-            final JSONObject object = new JSONObject(data);
+            final String contents = Files.readString(Paths.get(fileName));
+            final JSONObject object = new JSONObject(contents);
             final JSONObject classes = object.getJSONObject("classes");
             Iterator<String> keys = classes.keys();
             while (keys.hasNext()) {
-                final String key = keys.next();
-                final JSONArray roster = classes.getJSONArray(key);
-                final ArrayList<Student> cached = new ArrayList<>();
-                cached.ensureCapacity(roster.length());
+                final String subject = keys.next();
+                final JSONArray roster = classes.getJSONArray(subject);
+                final Classroom classroom = new Classroom(subject);
+                final AttendanceSheet attendance = classroom.getAttendanceSheet();
                 for (int i = 0; i < roster.length(); ++i) {
-                    cached.add(new Student(roster.getString(i)));
+                    final JSONObject data = roster.getJSONObject(i);
+                    final String name = data.getString("name");
+                    final boolean present = data.getBoolean("present");
+                    final Student student = new Student(name);
+                    classroom.add(student);
+                    attendance.mark(student, present);
                 }
-                addClass(key);
-                getClassroom(key).setStudents(cached);
+                addClass(subject, classroom);
             }
         }
         catch (JSONException | IOException jse) {
@@ -202,8 +206,12 @@ public class PrimaryController {
             final JSONObject classData = new JSONObject();
             for (var entry : classes.entrySet()) {
                 final JSONArray roster = new JSONArray();
+                final  var attendance = entry.getValue().getAttendanceSheet();
                 for (Student student : entry.getValue()) {
-                    roster.put(student.toString());
+                    final JSONObject data = new JSONObject();
+                    data.put("name", student.toString());
+                    data.put("present", attendance.get(student).getValue());
+                    roster.put(data);
                 }
                 classData.put(entry.getKey(), roster);
             }

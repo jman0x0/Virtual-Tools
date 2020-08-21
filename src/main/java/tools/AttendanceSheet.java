@@ -7,6 +7,7 @@ import javafx.scene.control.ToggleGroup;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 public class AttendanceSheet {
@@ -69,6 +70,10 @@ public class AttendanceSheet {
 
     public void clear() {
         sheet.clear();
+    }
+
+    public Set<Map.Entry<Student, SimpleBooleanProperty>> entrySet() {
+        return sheet.entrySet();
     }
 
     public ArrayList<Student> getRoster(Filter filter) {
