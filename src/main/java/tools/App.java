@@ -33,7 +33,7 @@ public class App extends Application {
         final Parent root = loader.load();
         primaryStage.setTitle("Virtual Tools");
         primaryStage.getIcons().addAll(new Image(getClass().getResourceAsStream("tools.png")));
-        primaryStage.setScene(new Scene(root, 795, 530));
+        primaryStage.setScene(new Scene(root, 870, 580));
         primaryStage.show();
 
     }

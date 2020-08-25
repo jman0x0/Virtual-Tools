@@ -25,6 +25,7 @@
          <NavigationData value="Picker, pointer_32x32.png"/>
          <NavigationData value="Grouper, group_32x32.png"/>
          <NavigationData value="Attendance, clipboard_32x32.png"/>
+         <NavigationData value="Notes, notes_32x32.png"/>
       </FXCollections>
       <ToggleGroup fx:id="order"/>
       <Integer fx:value="168" fx:id="navigationWidth"/>
@@ -35,7 +36,7 @@
          <VBox alignment="TOP_CENTER" spacing="10">
             <Label fx:id="title">Navigation</Label>
             <Separator/>
-            <ListView fixedCellSize="48" fx:id="navigationList" items="$navigationItems" minHeight="194" prefHeight="194"/>
+            <ListView fixedCellSize="48" fx:id="navigationList" items="$navigationItems" minHeight="242" prefHeight="242"/>
          </VBox>
          <VBox style="-fx-font-size: 1.5em" alignment="CENTER_LEFT" spacing="10">
             <Label text="Class">

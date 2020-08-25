@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import tools.AnimatedImageView?>
 
+<?import javafx.scene.control.CheckBox?>
 <fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@stylesheet.css" maxHeight="Infinity" maxWidth="Infinity">
     <TitledPane text="Picker" collapsible="false" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="ALWAYS">
         <VBox.margin>
@@ -19,11 +20,22 @@
         </VBox.margin>
         <StackPane>
             <VBox fx:id="picker" alignment="CENTER">
-                <Label fx:id="picked" alignment="CENTER" maxWidth="Infinity">
-                    <VBox.margin>
-                        <Insets left="32" right="32" bottom="32"/>
-                    </VBox.margin>
-                </Label>
+                <StackPane>
+                    <Label fx:id="picked" alignment="CENTER" maxWidth="Infinity">
+                        <VBox.margin>
+                            <Insets left="32" right="32" bottom="32"/>
+                        </VBox.margin>
+                    </Label>
+                    <Button StackPane.alignment="CENTER_RIGHT">
+                        <graphic>
+                            <ImageView>
+                                <image>
+                                    <Image url="@add_note.png"/>
+                                </image>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                </StackPane>
                 <ImageView fx:id="hat">
                     <image>
                         <Image url="@black_top_hat.png"/>
@@ -34,11 +46,14 @@
                         <Insets top="24" bottom="8"/>
                     </VBox.margin>
                 </Button>
-                <HBox alignment="CENTER">
-                    <ToggleButton fx:id="present" HBox.hgrow="ALWAYS" maxWidth="Infinity" selected="true">
-                        Present
-                    </ToggleButton>
-                </HBox>
+                <VBox alignment="CENTER">
+                    <CheckBox fx:id="present" maxWidth="Infinity" selected="true">
+                        Present Students Only
+                    </CheckBox>
+                    <CheckBox fx:id="animation" maxWidth="Infinity" selected="true">
+                        Play Animation
+                    </CheckBox>
+                </VBox>
             </VBox>
             <AnimatedImageView fx:id="gifView"/>
         </StackPane>

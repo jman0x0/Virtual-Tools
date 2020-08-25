@@ -60,6 +60,9 @@ public class PrimaryController {
                 case "ATTENDANCE":
                     borderPane.setCenter(new Attendance(this, classroom == null ? null : classroom.getAttendanceSheet()));
                     break;
+                case "NOTES":
+                    borderPane.setCenter(new Notes(this));
+                    break;
             }
         });
 

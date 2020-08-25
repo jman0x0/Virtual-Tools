@@ -1,15 +1,14 @@
 package tools;
 
 
-import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
@@ -25,7 +24,7 @@ public class Picker extends VBox {
     private Label picked;
 
     @FXML
-    private ToggleButton present;
+    private CheckBox present;
 
     @FXML
     private AnimatedImageView gifView;

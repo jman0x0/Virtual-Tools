@@ -106,3 +106,17 @@
 {
     -fx-font-size: 15px;
 }
+
+#picked > .button {
+    -fx-stroke: transparent;
+    -fx-border-color: transparent;
+}
+
+#picker .check-box {
+    -fx-font-size: 15px;
+}
+
+#picker .check-box > .box,
+#picker .check-box > .box > .mark {
+    -fx-padding: 6px;
+}
