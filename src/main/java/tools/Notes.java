@@ -7,6 +7,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
+import java.util.Scanner;
+import java.util.stream.IntStream;
+
 
 public class Notes extends VBox {
     @FXML
@@ -23,6 +26,9 @@ public class Notes extends VBox {
 
     @FXML
     private ToggleButton nonEmpty;
+
+    @FXML
+    private Label creditLabel;
 
     private final PrimaryController controller;
 
@@ -89,7 +95,30 @@ public class Notes extends VBox {
         final Student student = studentList.getSelectionModel().getSelectedItem();
         if (student != null) {
             classroom.getNotebook().setNote(student, current);
+            sumCredit(current);
         }
+    }
+
+    private void sumCredit(String data) {
+        final Scanner scanner = new Scanner(data);
+        long total = 0;
+        while (scanner.hasNext()) {
+            final String line = scanner.nextLine().trim();
+            final var first = IntStream.range(0, line.length())
+                              .filter(i -> !Character.isDigit(line.charAt(i)) && line.charAt(i) != '-' && line.charAt(i) != '+')
+                              .findFirst();
+
+            if (first.isPresent()) {
+                final int index = first.getAsInt();
+                try {
+                    final int value = Integer.parseInt(line.substring(0, index));
+                    total += value;
+                } catch (NumberFormatException ignored) {
+
+                }
+            }
+        }
+        creditLabel.setText(Long.toString(total));
     }
 
     private void studentSelected(Observable observable, Student old, Student current) {

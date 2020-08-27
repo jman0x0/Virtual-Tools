@@ -124,3 +124,7 @@
 .text-area:disabled .text {
     -fx-stroke: blue;
 }
+
+.date-picker-popup {
+    -fx-font-size: 14.0;
+}
