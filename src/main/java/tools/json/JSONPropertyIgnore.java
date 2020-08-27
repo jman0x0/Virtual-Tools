@@ -1,4 +1,4 @@
-package tools;
+package tools.json;
 
 /*
 Copyright (c) 2018 JSON.org

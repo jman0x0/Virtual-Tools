@@ -1,4 +1,4 @@
-package tools;
+package tools.json;
 
 import java.io.BufferedReader;
 import java.io.IOException;

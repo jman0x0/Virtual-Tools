@@ -1,4 +1,4 @@
-package tools;
+package tools.json;
 
 /*
 Copyright (c) 2002 JSON.org
@@ -23,6 +23,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
+import tools.json.JSONException;
+import tools.json.JSONObject;
 
 import java.util.Enumeration;
 import java.util.Properties;

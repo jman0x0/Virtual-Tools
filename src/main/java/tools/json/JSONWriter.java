@@ -1,4 +1,4 @@
-package tools;
+package tools.json;
 
 import java.io.IOException;
 import java.util.Collection;
