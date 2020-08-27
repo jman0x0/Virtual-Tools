@@ -142,6 +142,10 @@ public class Group extends VBox {
     }
 
     private ArrayList<Student> getActiveStudents() {
+        final var classroom = controller.getActiveClassroom();
+        if (classroom == null) {
+            return new ArrayList<>();
+        }
         if (!present.isSelected()) {
             return controller.getActiveClassroom().getAttendanceSheet().getRoster(AttendanceSheet.Filter.COMPLETE);
         }

@@ -4,6 +4,7 @@ import javafx.animation.FadeTransition;
 import javafx.beans.Observable;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Spinner;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Pane;
@@ -15,6 +16,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class NoteViewer {
+    @FXML
+    private Spinner<Integer> creditField;
+
     @FXML
     private Region root;
 
@@ -36,6 +40,8 @@ public class NoteViewer {
 
     private double offset;
 
+    private int oldValue;
+
     private Student student;
 
     private Notebook notebook;
@@ -44,6 +50,16 @@ public class NoteViewer {
     private void initialize() {
         root.setVisible(false);
         noteArea.textProperty().addListener(this::updateNotebook);
+        creditField.getValueFactory().setValue(1);
+        creditField.focusedProperty().addListener((observable, old, focused) -> {
+            if (focused) {
+                oldValue = creditField.getValue();
+            }
+            else if(!creditField.getEditor().getText().matches("-?\\d*")) {
+                creditField.getEditor().setText(Integer.toString(oldValue));
+                creditField.getValueFactory().setValue(oldValue);
+            }
+        });
     }
 
     public NoteViewer() {
@@ -116,7 +132,9 @@ public class NoteViewer {
             final DateFormat date = new SimpleDateFormat("yyyy/MM/dd@hh:mm a");
             final String timeStamp = date.format(Calendar.getInstance().getTime());
             final String separator = noteArea.getText().isEmpty() ? "" : "\n";
-            noteArea.setText(noteArea.getText() + separator + "+1 Credit " + timeStamp);
+            final Integer credit = creditField.getValue();
+            final String sign = credit >= 0 ? "+" : "";
+            noteArea.setText(noteArea.getText() + separator + sign + credit + " Credit " + timeStamp);
         }
     }
 }

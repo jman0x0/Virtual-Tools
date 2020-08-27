@@ -43,17 +43,13 @@ public class Classes extends BorderPane {
 
     @FXML
     public void initialize() {
-        classDisplay.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
-            @Override
-            public ListCell<String> call(ListView<String> param) {
-                return new RemovableCell();
-            }
-        });
+        classDisplay.setCellFactory(factory -> new RemovableCell());
         updateStudents();
         classDisplay.getSelectionModel().selectedItemProperty().addListener((observableValue, old, current) -> {
             classroom = controller.getClassroom(current);
             updateStudents();
         });
+
         controller.listenToOrderChange((observableValue, toggle, t1) -> {
             updateStudents();
         });

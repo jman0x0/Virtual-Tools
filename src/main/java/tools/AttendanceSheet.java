@@ -68,6 +68,12 @@ public class AttendanceSheet {
         this.callback = callback;
     }
 
+    public void checkAll() {
+        for (Student student : roster) {
+            mark(student, true);
+        }
+    }
+
     public void clear() {
         sheet.clear();
     }

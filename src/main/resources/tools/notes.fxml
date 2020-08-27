@@ -32,7 +32,7 @@
             <Insets topRightBottomLeft="8"/>
         </VBox.margin>
     </VBox>
-    <TextArea fx:id="noteArea" VBox.vgrow="ALWAYS">
+    <TextArea fx:id="noteArea" VBox.vgrow="ALWAYS" promptText="Select a student to view and edit their notes.">
         <VBox.margin>
             <Insets topRightBottomLeft="8"/>
         </VBox.margin>

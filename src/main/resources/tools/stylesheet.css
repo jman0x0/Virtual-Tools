@@ -120,3 +120,7 @@
 #picker .check-box > .box > .mark {
     -fx-padding: 6px;
 }
+
+.text-area:disabled .text {
+    -fx-stroke: blue;
+}
