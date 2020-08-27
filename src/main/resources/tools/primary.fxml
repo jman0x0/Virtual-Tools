@@ -71,9 +71,6 @@
          </VBox>
          <Pane maxHeight="Infinity" VBox.vgrow="ALWAYS"/>
          <VBox alignment="CENTER">
-            <Label id="title">
-               Help
-            </Label>
             <Button fx:id="help" onAction="#displayHelp">
                <graphic>
                   <ImageView>

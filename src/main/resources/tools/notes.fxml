@@ -6,18 +6,33 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.collections.FXCollections?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.ToggleButton?>
 
+<?import javafx.scene.control.ToggleGroup?>
 <fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@stylesheet.css" maxHeight="Infinity" maxWidth="Infinity">
     <fx:define>
         <FXCollections fx:id="students" fx:factory="observableArrayList"/>
+        <ToggleGroup fx:id="filter"/>
     </fx:define>
-    <TitledPane text="Students" collapsible="false">
-        <ListView fx:id="studentDisplay" items="$students"/>
+
+    <VBox VBox.vgrow="ALWAYS">
+        <TitledPane text="Students" collapsible="false">
+            <ListView fx:id="studentList" items="$students"/>
+        </TitledPane>
+        <HBox maxWidth="Infinity">
+            <ToggleButton HBox.hgrow="ALWAYS" maxWidth="Infinity" toggleGroup="$filter" selected="true">
+                Complete
+            </ToggleButton>
+            <ToggleButton fx:id="nonEmpty" HBox.hgrow="ALWAYS" maxWidth="Infinity" toggleGroup="$filter">
+                Nonempty
+            </ToggleButton>
+        </HBox>
         <VBox.margin>
             <Insets topRightBottomLeft="8"/>
         </VBox.margin>
-    </TitledPane>
-    <TextArea>
+    </VBox>
+    <TextArea fx:id="noteArea" VBox.vgrow="ALWAYS">
         <VBox.margin>
             <Insets topRightBottomLeft="8"/>
         </VBox.margin>

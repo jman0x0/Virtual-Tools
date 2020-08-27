@@ -4,9 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,5 +49,23 @@ public class Utilities {
             words.add(matcher.group(0));
         }
         return words.toArray(String[]::new);
+    }
+
+    public static void sortStudents(List<Student> students, PrimaryController.Order order) {
+        final HashMap<Student, String[]> names = new HashMap<>();
+        for (var student : students) {
+            if (order == PrimaryController.Order.FIRST_LAST) {
+                names.put(student, Utilities.extractWords(student.getFirstLast()));
+            }
+            else {
+                names.put(student, Utilities.extractWords(student.getLastFirst()));
+            }
+        }
+        Collections.sort(students, new Comparator<Student>() {
+            @Override
+            public int compare(Student lhs, Student rhs) {
+                return Arrays.compare(names.get(lhs), names.get(rhs));
+            }
+        });
     }
 }

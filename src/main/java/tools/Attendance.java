@@ -1,20 +1,18 @@
 package tools;
 
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.util.Callback;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 
 public class Attendance extends VBox {
     @FXML
@@ -71,21 +69,7 @@ public class Attendance extends VBox {
             updateNames();
         });
         controller.listenToOrderChange((observableValue, old, current) -> {
-            final HashMap<Student, String[]> names = new HashMap<>();
-            for (var student : students) {
-                if (controller.getOrder() == PrimaryController.Order.FIRST_LAST) {
-                    names.put(student, Utilities.extractWords(student.getFirstLast()));
-                }
-                else {
-                    names.put(student, Utilities.extractWords(student.getLastFirst()));
-                }
-            }
-            Collections.sort(students, new Comparator<Student>() {
-                @Override
-                public int compare(Student lhs, Student rhs) {
-                    return Arrays.compare(names.get(lhs), names.get(rhs));
-                }
-            });
+            Utilities.sortStudents(students, controller.getOrder());
         });
         display.setCellFactory(factory -> new StudentCell(itemToBoolean, controller));
         updateNames();

@@ -1,8 +1,6 @@
 package tools;
 
 import javafx.animation.FadeTransition;
-import javafx.animation.Transition;
-import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;

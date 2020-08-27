@@ -6,17 +6,18 @@ import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Picker extends VBox {
+public class Picker extends StackPane {
     @FXML
     private ImageView hat;
 
@@ -35,6 +36,8 @@ public class Picker extends VBox {
 
     private final PrimaryController controller;
 
+    private NoteViewer noteViewer;
+
     private boolean animating = false;
 
     public Picker(PrimaryController controller) {
@@ -45,6 +48,22 @@ public class Picker extends VBox {
         });
         controller.listenToOrderChange((observableValue, toggle, t1) -> {
             picked.setText(Utilities.reverseName(picked.getText()));
+        });
+        final FXMLLoader loader = new FXMLLoader(getClass().getResource("note_viewer.fxml"));
+
+        try {
+            noteViewer = loader.load();
+            noteViewer.setManaged(false);
+            noteViewer.resize(250, 450);
+            super.getChildren().add(noteViewer);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+        widthProperty().addListener((observableValue, number, t1) -> {
+            noteViewer.setOffset(t1.doubleValue());
+        });
+        heightProperty().addListener((observableValue, number, t1) -> {
+            noteViewer.resize(noteViewer.getWidth(), t1.doubleValue());
         });
     }
 
@@ -143,5 +162,10 @@ public class Picker extends VBox {
         else {
             picked.setText(student.getLastFirst());
         }
+    }
+
+    @FXML
+    private void noteStudent() {
+        noteViewer.show();
     }
 }

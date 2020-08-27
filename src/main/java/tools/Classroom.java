@@ -10,6 +10,8 @@ public class Classroom implements Iterable<Student> {
 
     private final AttendanceSheet attendanceSheet = new AttendanceSheet(students);
 
+    private final Notebook notebook = new Notebook();
+
     public Classroom(String name) {
         this.name = name;
     }
@@ -46,6 +48,10 @@ public class Classroom implements Iterable<Student> {
 
     public AttendanceSheet getAttendanceSheet() {
         return attendanceSheet;
+    }
+
+    public Notebook getNotebook() {
+        return notebook;
     }
 
     @Override

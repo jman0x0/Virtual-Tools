@@ -186,11 +186,16 @@ public class PrimaryController {
                 final JSONArray roster = classes.getJSONArray(subject);
                 final Classroom classroom = new Classroom(subject);
                 final AttendanceSheet attendance = classroom.getAttendanceSheet();
+                final Notebook notebook = classroom.getNotebook();
                 for (int i = 0; i < roster.length(); ++i) {
                     final JSONObject data = roster.getJSONObject(i);
                     final String name = data.getString("name");
                     final boolean present = data.getBoolean("present");
+
                     final Student student = new Student(name);
+                    if (data.has("note")) {
+                        notebook.setNote(student, data.getString("note"));
+                    }
                     classroom.add(student);
                     attendance.mark(student, present);
                 }
@@ -209,11 +214,15 @@ public class PrimaryController {
             final JSONObject classData = new JSONObject();
             for (var entry : classes.entrySet()) {
                 final JSONArray roster = new JSONArray();
-                final  var attendance = entry.getValue().getAttendanceSheet();
+                final AttendanceSheet attendance = entry.getValue().getAttendanceSheet();
+                final Notebook notebook = entry.getValue().getNotebook();
                 for (Student student : entry.getValue()) {
                     final JSONObject data = new JSONObject();
                     data.put("name", student.toString());
                     data.put("present", attendance.get(student).getValue());
+                    if (!notebook.getNote(student).isEmpty()) {
+                        data.put("note", notebook.getNote(student));
+                    }
                     roster.put(data);
                 }
                 classData.put(entry.getKey(), roster);
