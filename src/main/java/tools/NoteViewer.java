@@ -10,6 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.util.Duration;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -112,8 +113,10 @@ public class NoteViewer {
     @FXML
     private void credit(ActionEvent actionEvent) {
         if (notebook != null || student != null) {
-            String timeStamp = new SimpleDateFormat("yyyy/MM/dd@hh:mm a").format(Calendar.getInstance().getTime());
-            noteArea.setText(noteArea.getText() + '\n' + "+1 Credit " + timeStamp);
+            final DateFormat date = new SimpleDateFormat("yyyy/MM/dd@hh:mm a");
+            final String timeStamp = date.format(Calendar.getInstance().getTime());
+            final String separator = noteArea.getText().isEmpty() ? "" : "\n";
+            noteArea.setText(noteArea.getText() + separator + "+1 Credit " + timeStamp);
         }
     }
 }
