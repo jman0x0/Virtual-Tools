@@ -95,8 +95,8 @@ public class Notes extends VBox {
     private void studentSelected(Observable observable, Student old, Student current) {
         final Classroom classroom = controller.getActiveClassroom();
         noteArea.setDisable(current == null);
-        noteArea.clear();
         if (classroom == null || current == null) {
+            noteArea.clear();
             return;
         }
         final Notebook notebook = classroom.getNotebook();
