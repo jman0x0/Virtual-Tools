@@ -88,11 +88,18 @@
     -fx-font-size: 2em;
 }
 
-#help {
+#help,
+#donate {
     -fx-background-color: transparent;
 }
 
-#help:hover {
+#donate:hover
+{
+    -fx-cursor: hand;
+}
+
+#help:hover
+{
     -fx-cursor: hand;
     -fx-scale-x: 1.0625;
     -fx-scale-y: 1.0625;

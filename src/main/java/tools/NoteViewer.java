@@ -129,7 +129,7 @@ public class NoteViewer {
     @FXML
     private void credit(ActionEvent actionEvent) {
         if (notebook != null || student != null) {
-            final DateFormat date = new SimpleDateFormat("yyyy/MM/dd@hh:mm a");
+            final DateFormat date = new SimpleDateFormat("MM/dd/yyyy@hh:mm a");
             final String timeStamp = date.format(Calendar.getInstance().getTime());
             final String separator = noteArea.getText().isEmpty() ? "" : "\n";
             final Integer credit = creditField.getValue();

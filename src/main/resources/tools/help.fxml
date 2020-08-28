@@ -8,92 +8,135 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.text.TextFlow?>
-
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Label?>
-<fx:root type="javafx.scene.layout.BorderPane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@stylesheet.css" maxHeight="Infinity" maxWidth="Infinity">
-    <top>
-        <TabPane fx:id="tabPane" style="-fx-font-size: 1.25em">
-            <tabs>
-                <Tab text="Classes" closable="false">
-                    <content>
-                        <VBox>
-                            <TextFlow>
-                                <Text text="The"/>
-                                <Text style="-fx-font-weight: bold" text=" Classes "/>
-                                <Text text="section is where classes can be added or removed."/>
-                            </TextFlow>
-                            <Label wrapText="true" text="    •To add a class click &quot;Add Class&quot; button."/>
-                            <Label wrapText="true" text="    •To remove a class click the Trash icon on the class you want to remove."/>
-                            <Label wrapText="true" text="Note that class rosters will be saved upon closing the application. Additionally, previously added rosters will be loaded when the application starts up. Specifically, the most recent roster is initially loaded."/>
-                        </VBox>
-                    </content>
-                </Tab>
-                <Tab text="Picker" closable="false">
-                    <content>
-                        <VBox>
-                            <TextFlow>
-                                <Text text="The"/>
-                                <Text style="-fx-font-weight: bold" text=" Picker "/>
-                                <Text text="section is where students can be randomly picked."/>
-                            </TextFlow>
-                            <Label wrapText="true" text="    •Make sure that you are picking students from the appropriate class."/>
-                            <Label wrapText="true" text="        •Select the appropriate class via the ComboBox on the navigation bar."/>
-                            <Label wrapText="true" text="    •To pick a student click the &quot;Pick Student&quot; button."/>
-                            <Label wrapText="true" text="    •To add a note to the picked student, click the pencil icon to the right of the name area."/>
-                            <Label wrapText="true" text="    •To pick present students, check &quot;Present Students Only&quot; in the bottom left."/>
-                            <Label wrapText="true" text="    •To disable the animation, uncheck &quot;Play Animation&quot; in the bottom left."/>
-                        </VBox>
-                    </content>
-                </Tab>
-                <Tab text="Grouper" closable="false">
-                    <content>
-                        <VBox>
-                            <TextFlow>
-                                <Text text="The"/>
-                                <Text style="-fx-font-weight: bold" text=" Grouper "/>
-                                <Text text="section is where students can be grouped."/>
-                            </TextFlow>
-                            <Label wrapText="true" text="    •Make sure that you are grouping students from the appropriate class."/>
-                            <Label wrapText="true" text="        •Select the appropriate class with the ComboBox on the navigation bar."/>
-                            <Label wrapText="true" text="    •Edit Student Count field to generate groups with N students."/>
-                            <Label wrapText="true" text="    •Use the refresh icon to generate new groups."/>
-                        </VBox>
-                    </content>
-                </Tab>
-                <Tab text="Attendance" closable="false">
-                    <content>
-                        <VBox>
-                            <TextFlow>
-                                <Text text="The"/>
-                                <Text style="-fx-font-weight: bold" text=" Attendance "/>
-                                <Text text="section is where attendance can be taken from Zoom log files."/>
-                            </TextFlow>
-                            <Label wrapText="true" text="    •Make sure that you are taking attendance for the appropriate class."/>
-                            <Label wrapText="true" text="        •Select the appropriate class with the ComboBox on the navigation bar."/>
-                            <Label wrapText="true" text="    •To take attendance drop a Zoom CSV log onto the&quot;LOAD SHEET&quot; area."/>
-                            <Label wrapText="true" text="    •Use the &quot;Absent&quot; and &quot;Present&quot; to change the filter."/>
-                        </VBox>
-                    </content>
-                </Tab>
-                <Tab text="Notes" closable="false">
 
-                </Tab>
-                <Tab text="About" closable="false">
-
-                </Tab>
-            </tabs>
-        </TabPane>
-    </top>
-    <bottom>
-        <HBox>
-            <Pane HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-            <Button style="-fx-font-size: 1.25em" text="Close" onAction="#close">
-                <HBox.margin>
-                    <Insets right="4" bottom="4"/>
-                </HBox.margin>
-            </Button>
-        </HBox>
-    </bottom>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.control.Hyperlink?>
+<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@stylesheet.css" maxHeight="Infinity" maxWidth="Infinity">
+    <TabPane fx:id="tabPane" style="-fx-font-size: 1.25em" VBox.vgrow="SOMETIMES">
+        <tabs>
+            <Tab text="Classes" closable="false">
+                <content>
+                    <VBox>
+                        <TextFlow>
+                            <Text text="The"/>
+                            <Text style="-fx-font-weight: bold" text=" Classes "/>
+                            <Text text="section is where classes can be added or removed."/>
+                        </TextFlow>
+                        <Label wrapText="true" text="    •To add a class click &quot;Add Class&quot; button."/>
+                        <Label wrapText="true" text="    •To remove a class click the Trash icon on the class you want to remove."/>
+                        <Label wrapText="true" text="Note that class rosters will be saved upon closing the application. Additionally, previously added rosters will be loaded when the application starts up. Specifically, the most recent roster is initially loaded."/>
+                    </VBox>
+                </content>
+            </Tab>
+            <Tab text="Picker" closable="false">
+                <content>
+                    <VBox>
+                        <TextFlow>
+                            <Text text="The"/>
+                            <Text style="-fx-font-weight: bold" text=" Picker "/>
+                            <Text text="section is where students can be randomly picked."/>
+                        </TextFlow>
+                        <Label wrapText="true" text="    •Make sure that you are picking students from the appropriate class."/>
+                        <Label wrapText="true" text="        •Select the appropriate class via the ComboBox on the navigation bar."/>
+                        <Label wrapText="true" text="    •To pick a student click the &quot;Pick Student&quot; button."/>
+                        <Label wrapText="true" text="    •To add a note to the picked student, click the pencil icon to the right of the name area."/>
+                        <Label wrapText="true" text="    •To pick present students, check &quot;Present Students Only&quot; in the bottom left."/>
+                        <Label wrapText="true" text="    •To disable the animation, uncheck &quot;Play Animation&quot; in the bottom left."/>
+                    </VBox>
+                </content>
+            </Tab>
+            <Tab text="Grouper" closable="false">
+                <content>
+                    <VBox>
+                        <TextFlow>
+                            <Text text="The"/>
+                            <Text style="-fx-font-weight: bold" text=" Grouper "/>
+                            <Text text="section is where students can be grouped."/>
+                        </TextFlow>
+                        <Label wrapText="true" text="    •Make sure that you are grouping students from the appropriate class."/>
+                        <Label wrapText="true" text="        •Select the appropriate class with the ComboBox on the navigation bar."/>
+                        <Label wrapText="true" text="    •Edit Student Count field to generate groups with N students."/>
+                        <Label wrapText="true" text="    •Check the &quot;Prefer Balanced Groups&quot; box to prevent severe group size differences."/>
+                        <Label wrapText="true" text="    •Toggle the present button on to group present students and off to group all students."/>
+                        <Label wrapText="true" text="    •Use the refresh icon to generate new groups."/>
+                    </VBox>
+                </content>
+            </Tab>
+            <Tab text="Attendance" closable="false">
+                <content>
+                    <VBox>
+                        <TextFlow>
+                            <Text text="The"/>
+                            <Text style="-fx-font-weight: bold" text=" Attendance "/>
+                            <Text text="section is where attendance can be taken from Zoom log files."/>
+                        </TextFlow>
+                        <Label wrapText="true" text="    •Make sure that you are taking attendance for the appropriate class."/>
+                        <Label wrapText="true" text="        •Select the appropriate class with the ComboBox on the navigation bar."/>
+                        <Label wrapText="true" text="    •To manually take attendance check the CheckBox to the left of the Student."/>
+                        <Label wrapText="true" text="    •To automatically take attendance drop a Zoom CSV log onto the&quot;LOAD SHEET&quot; area."/>
+                        <Label wrapText="true" text="    •Use the &quot;Absent&quot; and &quot;Present&quot; to change the filter."/>
+                        <Label wrapText="true" text="    •Use the &quot;Check All&quot; and &quot;Clear All&quot; buttons to completely set or clear attendance."/>
+                    </VBox>
+                </content>
+            </Tab>
+            <Tab text="Notes" closable="false">
+                <VBox>
+                    <TextFlow>
+                        <Text text="The"/>
+                        <Text style="-fx-font-weight: bold" text=" Notes "/>
+                        <Text text="section is where notes for students can be viewed and added."/>
+                    </TextFlow>
+                    <Label wrapText="true" text="    •Make sure that you are viewing notes for the appropriate class."/>
+                    <Label wrapText="true" text="        •Select the appropriate class with the ComboBox on the navigation bar."/>
+                    <Label wrapText="true" text="    •Select a student to view and edit that student's notes."/>
+                </VBox>
+            </Tab>
+            <Tab text="About" closable="false">
+                <VBox alignment="CENTER" maxWidth="Infinity">
+                    <HBox>
+                        <Pane HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <Hyperlink onAction="#openSourcePage">
+                            View and support the project.
+                        </Hyperlink>
+                        <Pane HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    </HBox>
+                    <HBox>
+                        <Pane HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <Label text="Have issues or feature requests? Send an email"/>
+                        <Pane HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    </HBox>
+                    <HBox>
+                        <Pane HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <Hyperlink onAction="#openEmail">
+                            jman0x0@gmail.com
+                        </Hyperlink>
+                        <Pane HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+        </tabs>
+    </TabPane>
+    <HBox alignment="BOTTOM_CENTER">
+        <Button id="donate" style="-fx-font-size: 1.25em" onAction="#openDonationPage">
+            <graphic>
+                <ImageView>
+                    <image>
+                        <Image url="@donate.gif"/>
+                    </image>
+                </ImageView>
+            </graphic>
+            <HBox.margin>
+                <Insets left="4" bottom="4"/>
+            </HBox.margin>
+        </Button>
+        <Pane HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+        <Button style="-fx-font-size: 1.25em" text="Close" onAction="#close"/>
+        <VBox.margin>
+            <Insets left="4" right="4" bottom="4"/>
+        </VBox.margin>
+    </HBox>
 </fx:root>
