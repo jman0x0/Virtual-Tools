@@ -14,7 +14,7 @@
 <?import javafx.scene.control.Label?>
 <fx:root type="javafx.scene.layout.BorderPane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@stylesheet.css" maxHeight="Infinity" maxWidth="Infinity">
     <top>
-        <TabPane style="-fx-font-size: 1.25em">
+        <TabPane fx:id="tabPane" style="-fx-font-size: 1.25em">
             <tabs>
                 <Tab text="Classes" closable="false">
                     <content>
@@ -24,9 +24,9 @@
                                 <Text style="-fx-font-weight: bold" text=" Classes "/>
                                 <Text text="section is where classes can be added or removed."/>
                             </TextFlow>
-                            <Label text="    •To add a class drag a roster file onto the &quot;Add Class&quot; area."/>
-                            <Label text="    •To remove a class click the Trash icon on the class you want to remove."/>
-                            <Label text="Note that class rosters will be saved upon closing the application. Additionally, previously added rosters will be loaded when the application starts up." wrapText="true" />
+                            <Label wrapText="true" text="    •To add a class click &quot;Add Class&quot; button."/>
+                            <Label wrapText="true" text="    •To remove a class click the Trash icon on the class you want to remove."/>
+                            <Label wrapText="true" text="Note that class rosters will be saved upon closing the application. Additionally, previously added rosters will be loaded when the application starts up. Specifically, the most recent roster is initially loaded."/>
                         </VBox>
                     </content>
                 </Tab>
@@ -38,9 +38,12 @@
                                 <Text style="-fx-font-weight: bold" text=" Picker "/>
                                 <Text text="section is where students can be randomly picked."/>
                             </TextFlow>
-                            <Label text="    •Make sure that you are picking students from the appropriate class."/>
-                            <Label text="        •Select the appropriate class with the ComboBox on the navigation bar."/>
-                            <Label text="    •To pick a student click the &quot;Pick Student&quot; button."/>
+                            <Label wrapText="true" text="    •Make sure that you are picking students from the appropriate class."/>
+                            <Label wrapText="true" text="        •Select the appropriate class via the ComboBox on the navigation bar."/>
+                            <Label wrapText="true" text="    •To pick a student click the &quot;Pick Student&quot; button."/>
+                            <Label wrapText="true" text="    •To add a note to the picked student, click the pencil icon to the right of the name area."/>
+                            <Label wrapText="true" text="    •To pick present students, check &quot;Present Students Only&quot; in the bottom left."/>
+                            <Label wrapText="true" text="    •To disable the animation, uncheck &quot;Play Animation&quot; in the bottom left."/>
                         </VBox>
                     </content>
                 </Tab>
@@ -52,10 +55,10 @@
                                 <Text style="-fx-font-weight: bold" text=" Grouper "/>
                                 <Text text="section is where students can be grouped."/>
                             </TextFlow>
-                            <Label text="    •Make sure that you are grouping students from the appropriate class."/>
-                            <Label text="        •Select the appropriate class with the ComboBox on the navigation bar."/>
-                            <Label text="    •Edit Student Count field to generate groups with N students."/>
-                            <Label text="    •Use the refresh icon to generate new groups."/>
+                            <Label wrapText="true" text="    •Make sure that you are grouping students from the appropriate class."/>
+                            <Label wrapText="true" text="        •Select the appropriate class with the ComboBox on the navigation bar."/>
+                            <Label wrapText="true" text="    •Edit Student Count field to generate groups with N students."/>
+                            <Label wrapText="true" text="    •Use the refresh icon to generate new groups."/>
                         </VBox>
                     </content>
                 </Tab>
@@ -67,12 +70,18 @@
                                 <Text style="-fx-font-weight: bold" text=" Attendance "/>
                                 <Text text="section is where attendance can be taken from Zoom log files."/>
                             </TextFlow>
-                            <Label text="    •Make sure that you are taking attendance for the appropriate class."/>
-                            <Label text="        •Select the appropriate class with the ComboBox on the navigation bar."/>
-                            <Label text="    •To take attendance drop a Zoom CSV log onto the&quot;LOAD SHEET&quot; area."/>
-                            <Label text="    •Use the &quot;Absent&quot; and &quot;Present&quot; to change the filter."/>
+                            <Label wrapText="true" text="    •Make sure that you are taking attendance for the appropriate class."/>
+                            <Label wrapText="true" text="        •Select the appropriate class with the ComboBox on the navigation bar."/>
+                            <Label wrapText="true" text="    •To take attendance drop a Zoom CSV log onto the&quot;LOAD SHEET&quot; area."/>
+                            <Label wrapText="true" text="    •Use the &quot;Absent&quot; and &quot;Present&quot; to change the filter."/>
                         </VBox>
                     </content>
+                </Tab>
+                <Tab text="Notes" closable="false">
+
+                </Tab>
+                <Tab text="About" closable="false">
+
                 </Tab>
             </tabs>
         </TabPane>

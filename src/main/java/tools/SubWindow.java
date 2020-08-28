@@ -19,13 +19,16 @@ public interface SubWindow {
         final Stage stage = new Stage();
         final double width = getWindowWidth();
         final double height = getWindowHeight();
+        final double minWidth = getMinimumWidth();
+        final double minHeight = getMinimumHeight();
 
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(parent);
         stage.setWidth(width);
+        stage.setMinWidth(minWidth);
         stage.setHeight(height);
+        stage.setMinHeight(minHeight);
         stage.getIcons().addAll(parent.getIcons());
-
         return stage;
     }
 
@@ -36,4 +39,12 @@ public interface SubWindow {
     double getWindowWidth();
 
     double getWindowHeight();
+
+    default double getMinimumWidth() {
+        return getWindowWidth();
+    }
+
+    default double getMinimumHeight() {
+        return getWindowHeight();
+    }
 }

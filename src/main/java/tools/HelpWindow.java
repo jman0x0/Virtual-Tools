@@ -1,11 +1,20 @@
 package tools;
 
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 public class HelpWindow extends BorderPane implements SubWindow {
+    @FXML
+    private TabPane tabPane;
+
     public HelpWindow() {
         Utilities.loadController(this, "help.fxml");
     }
@@ -22,12 +31,31 @@ public class HelpWindow extends BorderPane implements SubWindow {
 
     @Override
     public double getWindowWidth() {
-        return 540;
+        return 560;
     }
 
     @Override
     public double getWindowHeight() {
-        return 270;
+        return 315 ;
+    }
+
+    @FXML
+    private void initialize() {
+        final var tabs = tabPane.getTabs();
+
+        for (Tab tab : tabs) {
+            final Node node = tab.contentProperty().get();
+            if (node instanceof Parent) {
+                final Parent parent = (Parent)node;
+
+                for (var child : parent.getChildrenUnmodifiable()) {
+                    if (child instanceof Region) {
+                        ((Region)child).maxWidthProperty().bind(tabPane.widthProperty());
+                    }
+                }
+            }
+
+        }
     }
 
     @FXML
