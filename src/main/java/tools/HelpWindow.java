@@ -78,7 +78,7 @@ public class HelpWindow extends VBox implements SubWindow {
     @FXML
     private void openSourcePage() {
         try {
-            Desktop.getDesktop().browse(new URI("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=4KY8JM4V6TLTE&currency_code=USD&source=url"));
+            Desktop.getDesktop().browse(new URI("https://github.com/jman0x0/Virtual-Tools/tree/master"));
         } catch (IOException | URISyntaxException ioe) {
             ioe.printStackTrace();
         }
