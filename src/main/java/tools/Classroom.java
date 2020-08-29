@@ -38,6 +38,15 @@ public class Classroom implements Iterable<Student> {
         attendanceSheet.clear();
     }
 
+    public Student getStudentFromName(String firstLast) {
+        for (var student : students) {
+            if (student.getFirstLast().equals(firstLast)) {
+                return student;
+            }
+        }
+        return null;
+    }
+
     public int size() {
         return students.size();
     }

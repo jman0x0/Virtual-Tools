@@ -30,6 +30,10 @@ public class PrimaryController {
 
     private Map<String, Classroom> classes = new LinkedHashMap<>();
 
+    private final String CONFIG_FILE = "configuration.json";
+
+    private final HashMap<String, Node> PANES = new HashMap<>();
+
     @FXML
     private ToggleGroup order;
 
@@ -78,13 +82,16 @@ public class PrimaryController {
             }
         });
         App.STAGE_STACK.peek().setOnCloseRequest(windowEvent -> {
-            save("configuration.json", datePicker.getValue().format(formatter));
+            save(CONFIG_FILE, datePicker.getValue().format(formatter));
         });
         datePicker.setValue(LocalDate.now());
         if (classes.isEmpty()) {
-            loadLastRoster("configuration.json");
+            loadLastRoster(CONFIG_FILE);
         }
         navigationList.getSelectionModel().select(0);
+        //PANES.put("CLASSES", new Classes(this));
+        //PANES.put("PICKER", new Picker(this));
+        //PANES.put("GROUPER", new Groupe);
     }
 
     @FXML
@@ -212,7 +219,9 @@ public class PrimaryController {
             final String contents = Files.readString(Paths.get(fileName));
             final JSONObject object = new JSONObject(contents);
             if (object.has(date)) {
-                loadClassObject(object.getJSONObject(date), false);
+                for (var classroom : loadClassrooms(object.getJSONObject(date), false)) {
+                    addClass(classroom.getName(), classroom);
+                }
             }
         }
         catch (JSONException | IOException jse) {
@@ -220,6 +229,32 @@ public class PrimaryController {
         }
     }
 
+    public ArrayList<Classroom> getClassroomsInRange(LocalDate begin, LocalDate end) {
+        final String fileName = CONFIG_FILE;
+        final ArrayList<Classroom> classrooms = new ArrayList<>();
+        try {
+            if (!new File(fileName).exists()) {
+                return classrooms;
+            }
+            final String contents = Files.readString(Paths.get(fileName));
+            final JSONObject object = new JSONObject(contents);
+            Iterator<String> dates = object.keys();
+            final Date dateBegin = Date.from(begin.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            final Date dateEnd = Date.from(end.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+            while (dates.hasNext()) {
+                final String key = dates.next();
+                final Date date = formatter.parse(key);
+                if (date.compareTo(dateBegin) >= 0 && date.compareTo(dateEnd) <= 0) {
+                    classrooms.addAll(loadClassrooms(object.getJSONObject(key), false));
+                }
+            }
+        }
+        catch (IOException | ParseException ioe) {
+            ioe.printStackTrace();
+        }
+        return classrooms;
+    }
 
     public void save(String fileName, String date) {
         FileWriter writer = null;
@@ -289,7 +324,9 @@ public class PrimaryController {
                 }
             }
             if (access != null) {
-                loadClassObject(object.getJSONObject(access), true);
+                for (var classroom : loadClassrooms(object.getJSONObject(access), true)) {
+                    classes.put(classroom.getName(), classroom);
+                }
             }
         }
         catch (IOException | ParseException ioe) {
@@ -297,7 +334,7 @@ public class PrimaryController {
         }
     }
 
-    private JSONObject fetchRoot(String fileName) {
+    private static JSONObject fetchRoot(String fileName) {
         try {
             return new JSONObject(Files.readString(Paths.get(fileName)));
         }
@@ -306,7 +343,8 @@ public class PrimaryController {
         }
     }
 
-    private void loadClassObject(JSONObject selected, boolean rosterOnly) throws JSONException {
+    private static ArrayList<Classroom> loadClassrooms(JSONObject selected, boolean rosterOnly) throws JSONException {
+        final ArrayList<Classroom> classrooms = new ArrayList<>();
         final JSONObject classes = selected.getJSONObject("classes");
         Iterator<String> keys = classes.keys();
         while (keys.hasNext()) {
@@ -328,7 +366,8 @@ public class PrimaryController {
                     attendance.mark(student, data.getBoolean("present"));
                 }
             }
-            addClass(subject, classroom);
+            classrooms.add(classroom);
         }
+        return classrooms;
     }
 }

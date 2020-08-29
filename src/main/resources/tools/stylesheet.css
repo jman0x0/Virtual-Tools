@@ -135,3 +135,12 @@
 .date-picker-popup {
     -fx-font-size: 14.0;
 }
+
+.minimalTable .column-header-background {
+    -fx-max-height: 0;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
+}
+.minimalTable .table-row-cell{
+    -fx-table-cell-border-color: transparent;
+}

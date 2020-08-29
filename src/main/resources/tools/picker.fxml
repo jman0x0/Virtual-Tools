@@ -21,7 +21,7 @@
             <VBox fx:id="picker" alignment="CENTER">
                 <StackPane>
                     <VBox.margin>
-                        <Insets bottom="96"/>
+                        <Insets bottom="120"/>
                     </VBox.margin>
                     <Label fx:id="picked" alignment="CENTER" maxWidth="Infinity">
 
@@ -55,8 +55,8 @@
                         Play Animation
                     </CheckBox>
                 </VBox>
+                <AnimatedImageView managed="false" StackPane.alignment="TOP_CENTER" fx:id="gifView"/>
             </VBox>
-            <AnimatedImageView fx:id="gifView"/>
         </StackPane>
     </TitledPane>
 </fx:root>

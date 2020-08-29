@@ -7,6 +7,7 @@ import javafx.animation.ScaleTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -143,8 +144,12 @@ public class Picker extends StackPane {
     }
 
     private void finalizePick(ActionEvent actionEvent) {
-        gifView.play();
-        gifView.setTranslateY(-240);
+        if (animation.isSelected()) {
+            gifView.play();
+            gifView.setScaleX(1.25);
+            gifView.setLayoutX(hat.getLayoutX() - hat.getImage().getWidth());
+            gifView.setLayoutY(-hat.getImage().getHeight());
+        }
         if (!SHUFFLED.isEmpty()) {
             final Student student = SHUFFLED.remove(SHUFFLED.size() - 1);
             ACTIVE_BOOK = controller.getActiveClassroom().getNotebook();

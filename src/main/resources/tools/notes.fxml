@@ -3,15 +3,16 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.collections.FXCollections?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.ToggleButton?>
-
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.TableView?>
+
 <fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@stylesheet.css" maxHeight="Infinity" maxWidth="Infinity">
     <fx:define>
         <FXCollections fx:id="students" fx:factory="observableArrayList"/>
@@ -19,8 +20,8 @@
     </fx:define>
 
     <VBox VBox.vgrow="ALWAYS">
-        <TitledPane text="Students" collapsible="false">
-            <ListView fx:id="studentList" items="$students"/>
+        <TitledPane VBox.vgrow="ALWAYS" text="Students" collapsible="false" maxHeight="Infinity">
+            <TableView fx:id="studentList" items="$students"/>
         </TitledPane>
         <HBox maxWidth="Infinity">
             <ToggleButton HBox.hgrow="ALWAYS" maxWidth="Infinity" toggleGroup="$filter" selected="true">
@@ -34,17 +35,19 @@
             <Insets topRightBottomLeft="8"/>
         </VBox.margin>
     </VBox>
+    <HBox alignment="CENTER">
+        <Label text="Begin: "/>
+        <DatePicker HBox.hgrow="ALWAYS" fx:id="dateBegin" maxWidth="Infinity"/>
+        <Pane HBox.hgrow="ALWAYS"/>
+        <Label text="End: "/>
+        <DatePicker HBox.hgrow="ALWAYS" fx:id="dateEnd" maxWidth="Infinity"/>
+        <VBox.margin>
+            <Insets topRightBottomLeft="8"/>
+        </VBox.margin>
+    </HBox>
     <TextArea fx:id="noteArea" VBox.vgrow="ALWAYS" promptText="Select a student to view and edit their notes.">
         <VBox.margin>
             <Insets topRightBottomLeft="8"/>
         </VBox.margin>
     </TextArea>
-    <HBox>
-        <Pane HBox.hgrow="ALWAYS"/>
-        <Label style="-fx-font-size: 16" text="Total Credit: "/>
-        <Label HBox.hgrow="SOMETIMES" fx:id="creditLabel" style="-fx-font-size: 16"/>
-        <VBox.margin>
-            <Insets topRightBottomLeft="8"/>
-        </VBox.margin>
-    </HBox>
 </fx:root>

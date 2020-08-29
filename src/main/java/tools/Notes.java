@@ -1,12 +1,18 @@
 package tools;
 
 import javafx.beans.Observable;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
@@ -16,7 +22,7 @@ public class Notes extends VBox {
     private ObservableList<Student> students;
 
     @FXML
-    private ListView<Student> studentList;
+    private TableView<Student> studentList;
 
     @FXML
     private TextArea noteArea;
@@ -25,10 +31,13 @@ public class Notes extends VBox {
     private ToggleGroup filter;
 
     @FXML
-    private ToggleButton nonEmpty;
+    private DatePicker dateBegin;
 
     @FXML
-    private Label creditLabel;
+    private DatePicker dateEnd;
+
+    @FXML
+    private ToggleButton nonEmpty;
 
     private final PrimaryController controller;
 
@@ -39,34 +48,71 @@ public class Notes extends VBox {
 
     @FXML
     private void initialize() {
+        studentList.getStyleClass().add("minimalTable");
         filter.selectedToggleProperty().addListener(observable -> updateStudents());
         controller.listenToClassChange((observable, old, current) -> updateStudents());
         controller.listenToOrderChange((observable, old, current) -> updateStudents());
         updateStudents();
-        studentList.setCellFactory(new Callback<>() {
+
+        final TableColumn<Student, Integer> tally = new TableColumn<>();
+        tally.setCellValueFactory((cell) -> {
+            return new SimpleIntegerProperty(getCredit(cell.getValue())).asObject();
+        });
+        tally.setPrefWidth(48);
+        tally.setCellFactory(new Callback<>() {
             @Override
-            public ListCell<Student> call(ListView<Student> list) {
-                final ListCell<Student> cell = new ListCell<>() {
+            public TableCell<Student, Integer> call(TableColumn<Student, Integer> param) {
+                return new TableCell<>() {
                     @Override
-                    public void updateItem(Student item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (item == null || empty) {
-                            setText(null);
+                    public void updateIndex(int i) {
+                        super.updateIndex(i);
+                        if (getItem() == null) {
+                            return;
                         }
-                        else if (controller.getOrder() == PrimaryController.Order.FIRST_LAST) {
-                            setText(item.getFirstLast());
+                        if (getItem() > 0) {
+                            super.setStyle("-fx-text-fill: green");
+                        }
+                        else if (getItem() == 0) {
+                            super.setStyle("-fx-text-fill: black");
                         }
                         else {
-                            setText(item.getLastFirst());
+                            super.setStyle("-fx-text-fill: red");
+                        }
+                    }
+
+                    @Override
+                    protected void updateItem(Integer item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (empty || item == null) {
+                            setText(null);
+                        }
+                        else {
+                            setText(item.toString());
                         }
                     }
                 };
-                return cell;
             }
         });
+        final TableColumn<Student, String> name = new TableColumn<>();
+        name.setCellValueFactory((cell) -> {
+            if (controller.getOrder() == PrimaryController.Order.FIRST_LAST) {
+                return new SimpleStringProperty(cell.getValue().getFirstLast());
+            }
+            else {
+                return new SimpleStringProperty(cell.getValue().getLastFirst());
+            }
+        });
+        studentList.setColumnResizePolicy((parem) -> true);
+        studentList.getColumns().add(tally);
+        studentList.getColumns().add(name);
         studentList.getSelectionModel().selectedItemProperty().addListener(this::studentSelected);
         noteArea.textProperty().addListener(this::noteChanged);
         noteArea.setDisable(true);
+        dateBegin.setValue(LocalDate.now());
+        dateEnd.setValue(LocalDate.now());
+        dateBegin.valueProperty().addListener((observableValue, old, date) -> updateStudents());
+        dateEnd.valueProperty().addListener((observableValue, old, date) -> updateStudents());
     }
 
     private void updateStudents() {
@@ -94,31 +140,44 @@ public class Notes extends VBox {
         }
         final Student student = studentList.getSelectionModel().getSelectedItem();
         if (student != null) {
+            studentList.refresh();
             classroom.getNotebook().setNote(student, current);
-            sumCredit(current);
         }
     }
 
-    private void sumCredit(String data) {
-        final Scanner scanner = new Scanner(data);
-        long total = 0;
+    private int getCredit(Student student) {
+        final Classroom activeSubject = controller.getActiveClassroom();
+        if (activeSubject == null) {
+            return 0;
+        }
+
+        final LocalDate begin = dateBegin.getValue();
+        final LocalDate end = dateEnd.getValue();
+        final ArrayList<Classroom> classrooms = controller.getClassroomsInRange(begin, end);
+        final StringBuilder builder = new StringBuilder();
+        for (var classroom : classrooms) {
+            if (activeSubject.getName().equals(classroom.getName())) {
+                final Student managed = classroom.getStudentFromName(student.getFirstLast());
+                builder.append(classroom.getNotebook().getNote(managed));
+            }
+        }
+        final Scanner scanner = new Scanner(builder.toString());
+        int total = 0;
         while (scanner.hasNext()) {
             final String line = scanner.nextLine().trim();
             final var first = IntStream.range(0, line.length())
-                              .filter(i -> !Character.isDigit(line.charAt(i)) && line.charAt(i) != '-' && line.charAt(i) != '+')
-                              .findFirst();
+                    .filter(i -> !Character.isDigit(line.charAt(i)) && line.charAt(i) != '-' && line.charAt(i) != '+')
+                    .findFirst();
 
-            if (first.isPresent()) {
-                final int index = first.getAsInt();
-                try {
-                    final int value = Integer.parseInt(line.substring(0, index));
-                    total += value;
-                } catch (NumberFormatException ignored) {
+            final int index = first.orElse(line.length());
+            try {
+                final int value = Integer.parseInt(line.substring(0, index));
+                total += value;
+            } catch (NumberFormatException ignored) {
 
-                }
             }
         }
-        creditLabel.setText(Long.toString(total));
+        return total;
     }
 
     private void studentSelected(Observable observable, Student old, Student current) {
