@@ -16,7 +16,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-public class Classes extends BorderPane {
+public class Classes extends BorderPane implements Refreshable {
     @FXML
     private ListView<String> classDisplay;
 
@@ -31,6 +31,24 @@ public class Classes extends BorderPane {
 
     @FXML
     private Button addStudent;
+
+    private ListChangeListener<String> listener = new ListChangeListener<String>() {
+        @Override
+        public void onChanged(Change<? extends String> change) {
+            while (change.next()) {
+                final var removed = change.getRemoved();
+                final var added = change.getAddedSubList();
+                for (int i = 0; i < removed.size(); ++i) {
+                    if (change.wasReplaced()) {
+                        controller.updateClass(removed.get(i), added.get(i));
+                    }
+                    else {
+                        controller.removeClass(removed.get(i));
+                    }
+                }
+            }
+        }
+    };
 
     private final PrimaryController controller;
 
@@ -53,23 +71,7 @@ public class Classes extends BorderPane {
         controller.listenToOrderChange((observableValue, toggle, t1) -> {
             updateStudents();
         });
-        classDisplay.getItems().addListener(new ListChangeListener<String>() {
-            @Override
-            public void onChanged(Change<? extends String> change) {
-                while (change.next()) {
-                    final var removed = change.getRemoved();
-                    final var added = change.getAddedSubList();
-                    for (int i = 0; i < removed.size(); ++i) {
-                        if (change.wasReplaced()) {
-                            controller.updateClass(removed.get(i), added.get(i));
-                        }
-                        else {
-                            controller.removeClass(removed.get(i));
-                        }
-                    }
-                }
-            }
-        });
+        classDisplay.getItems().addListener(listener);
         classes.addAll(controller.getClassSet());
         if (!classes.isEmpty() && classDisplay.getSelectionModel().getSelectedItem() == null) {
             classDisplay.getSelectionModel().select(0);
@@ -179,5 +181,19 @@ public class Classes extends BorderPane {
         final var temp = list.get(first);
         list.set(first, list.get(last));
         list.set(last, temp);
+    }
+
+    @Override
+    public void refresh() {
+        final int selected = classDisplay.getSelectionModel().getSelectedIndex();
+        final String selection = selected >= 0 ? classes.get(selected) : null;
+        classes.removeListener(listener);
+        classes.clear();
+        classes.addAll(controller.getClassSet());
+        classes.addListener(listener);
+        final var position = classes.indexOf(selection);
+        if (position >= 0) {
+            classDisplay.getSelectionModel().select(position);
+        }
     }
 }

@@ -7,8 +7,6 @@ import javafx.animation.ScaleTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Point2D;
-import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -20,7 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Picker extends StackPane {
+public class Picker extends StackPane implements Refreshable {
     @FXML
     private ImageView hat;
 
@@ -36,11 +34,11 @@ public class Picker extends StackPane {
     @FXML
     private AnimatedImageView gifView;
 
-    private static Notebook ACTIVE_BOOK = null;
+    private Notebook notebook = null;
 
-    private static Student ACTIVE_STUDENT = null;
+    private Student student = null;
 
-    private static ArrayList<Student> SHUFFLED = new ArrayList<>();
+    private ArrayList<Student> SHUFFLED = new ArrayList<>();
 
     private final PrimaryController controller;
 
@@ -79,9 +77,6 @@ public class Picker extends StackPane {
 
     @FXML
     protected void initialize() {
-        if (ACTIVE_STUDENT != null) {
-            setStudent(ACTIVE_STUDENT);
-        }
         present.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
             restock();
         });
@@ -152,7 +147,7 @@ public class Picker extends StackPane {
         }
         if (!SHUFFLED.isEmpty()) {
             final Student student = SHUFFLED.remove(SHUFFLED.size() - 1);
-            ACTIVE_BOOK = controller.getActiveClassroom().getNotebook();
+            notebook = controller.getActiveClassroom().getNotebook();
             setStudent(student);
         }
         animating = false;
@@ -173,7 +168,7 @@ public class Picker extends StackPane {
     }
 
     private void setStudent(Student student) {
-        ACTIVE_STUDENT = student;
+        this.student = student;
         if (controller.getOrder() == PrimaryController.Order.FIRST_LAST) {
             picked.setText(student.getFirstLast());
         }
@@ -181,16 +176,21 @@ public class Picker extends StackPane {
             picked.setText(student.getLastFirst());
         }
         if (noteViewer != null) {
-            noteViewer.setStudentAndBook(ACTIVE_STUDENT, ACTIVE_BOOK);
+            noteViewer.setStudentAndBook(this.student, this.notebook);
         }
     }
 
     @FXML
     private void noteStudent() {
-        if (ACTIVE_BOOK == null) {
+        if (notebook == null) {
             return;
         }
-        noteViewer.setStudentAndBook(ACTIVE_STUDENT, ACTIVE_BOOK);
+        noteViewer.setStudentAndBook(this.student, this.notebook);
         noteViewer.show();
+    }
+
+    @Override
+    public void refresh() {
+
     }
 }

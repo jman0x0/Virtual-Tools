@@ -9,15 +9,15 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
 
-public class Notes extends VBox {
+public class Notes extends VBox implements Refreshable {
     @FXML
     private ObservableList<Student> students;
 
@@ -103,6 +103,7 @@ public class Notes extends VBox {
                 return new SimpleStringProperty(cell.getValue().getLastFirst());
             }
         });
+        name.setPrefWidth(300);
         studentList.setColumnResizePolicy((parem) -> true);
         studentList.getColumns().add(tally);
         studentList.getColumns().add(name);
@@ -140,9 +141,10 @@ public class Notes extends VBox {
         }
         final Student student = studentList.getSelectionModel().getSelectedItem();
         if (student != null) {
-            studentList.refresh();
             classroom.getNotebook().setNote(student, current);
+            studentList.refresh();
         }
+
     }
 
     private int getCredit(Student student) {
@@ -158,13 +160,16 @@ public class Notes extends VBox {
         for (var classroom : classrooms) {
             if (activeSubject.getName().equals(classroom.getName())) {
                 final Student managed = classroom.getStudentFromName(student.getFirstLast());
-                builder.append(classroom.getNotebook().getNote(managed));
+                builder.append(classroom.getNotebook().getNote(managed)).append('\n');
             }
         }
         final Scanner scanner = new Scanner(builder.toString());
         int total = 0;
         while (scanner.hasNext()) {
             final String line = scanner.nextLine().trim();
+            if (line.length() == 0 || (line.charAt(0) != '+' && line.charAt(0) != '-')) {
+                continue;
+            }
             final var first = IntStream.range(0, line.length())
                     .filter(i -> !Character.isDigit(line.charAt(i)) && line.charAt(i) != '-' && line.charAt(i) != '+')
                     .findFirst();
@@ -190,5 +195,17 @@ public class Notes extends VBox {
         final Notebook notebook = classroom.getNotebook();
         final String note = notebook.getNote(current);
         noteArea.setText(note);
+    }
+
+    @Override
+    public void refresh() {
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        if (dateEnd.getValue().format(formatter).equals(dateBegin.getValue().format(formatter))) {
+            dateBegin.setValue(controller.getActiveDate());
+            dateEnd.setValue(controller.getActiveDate());
+        }
+        else {
+            updateStudents();
+        }
     }
 }

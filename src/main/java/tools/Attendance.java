@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-public class Attendance extends VBox {
+public class Attendance extends VBox implements Refreshable {
     @FXML
     private ObservableList<Student> students;
 
@@ -64,9 +64,7 @@ public class Attendance extends VBox {
             return sheet == null ? null : sheet.get(student);
         };
         controller.listenToClassChange((observableValue, old, current) -> {
-            final var classroom = controller.getActiveClassroom();
-            sheet = classroom == null ? null : classroom.getAttendanceSheet();
-            updateNames();
+            refresh();
         });
         controller.listenToOrderChange((observableValue, old, current) -> {
             Utilities.sortStudents(students, controller.getOrder());
@@ -205,5 +203,12 @@ public class Attendance extends VBox {
             }
         }
         return true;
+    }
+
+    @Override
+    public void refresh() {
+        final var classroom = controller.getActiveClassroom();
+        sheet = classroom == null ? null : classroom.getAttendanceSheet();
+        updateNames();
     }
 }

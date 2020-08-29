@@ -57,6 +57,11 @@ public class PrimaryController {
 
     @FXML
     protected void initialize() {
+        PANES.put("CLASSES", new Classes(this));
+        PANES.put("PICKER", new Picker(this));
+        PANES.put("GROUPER", new Group(this));
+        PANES.put("ATTENDANCE", new Attendance(this, null));
+        PANES.put("NOTES", new Notes(this));
         navigationList.setCellFactory(cell -> new NavigationCell());
 
         navigationList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -68,7 +73,6 @@ public class PrimaryController {
                 oldVal.setSelected(true);
             }
         });
-
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         datePicker.valueProperty().addListener((observable, old, date) -> {
             if (old != null) {
@@ -76,9 +80,7 @@ public class PrimaryController {
             }
             if (date != null) {
                 load("configuration.json", date.format(formatter));
-                if (navigationList != null && !navigationList.getSelectionModel().isEmpty()) {
-                    loadPane(navigationList.getSelectionModel().getSelectedItem().getName());
-                }
+                refreshPane();
             }
         });
         App.STAGE_STACK.peek().setOnCloseRequest(windowEvent -> {
@@ -89,9 +91,6 @@ public class PrimaryController {
             loadLastRoster(CONFIG_FILE);
         }
         navigationList.getSelectionModel().select(0);
-        //PANES.put("CLASSES", new Classes(this));
-        //PANES.put("PICKER", new Picker(this));
-        //PANES.put("GROUPER", new Groupe);
     }
 
     @FXML
@@ -104,44 +103,27 @@ public class PrimaryController {
         return classes.keySet();
     }
 
+    public LocalDate getActiveDate() {
+        return datePicker.getValue();
+    }
+
     public Classroom addClass(String name, Classroom classroom) {
         classChoices.getItems().add(name);
 
+        final var added = classes.put(name, classroom);
         if (classChoices.getSelectionModel().isEmpty()) {
             classChoices.getSelectionModel().select(0);
         }
-        return classes.put(name, classroom);
+        return added;
     }
 
     public void loadPane(String pane) {
-        final var classroom = getActiveClassroom();
-
-        switch (pane.toUpperCase()) {
-            case "CLASSES":
-                borderPane.setCenter(new Classes(this));
-                break;
-            case "PICKER":
-                borderPane.setCenter(new Picker(this));
-                break;
-            case "GROUPER":
-                borderPane.setCenter(new Group(this));
-                break;
-            case "ATTENDANCE":
-                borderPane.setCenter(new Attendance(this, classroom == null ? null : classroom.getAttendanceSheet()));
-                break;
-            case "NOTES":
-                borderPane.setCenter(new Notes(this));
-                break;
-        }
+        borderPane.setCenter(PANES.get(pane.toUpperCase()));
+        refreshPane();
     }
 
     public Classroom addClass(String name) {
-        classChoices.getItems().add(name);
-
-        if (classChoices.getSelectionModel().isEmpty()) {
-            classChoices.getSelectionModel().select(0);
-        }
-        return classes.put(name, new Classroom(name));
+        return addClass(name, new Classroom(name));
     }
 
     public void setDisplay(Node node) {
@@ -239,13 +221,19 @@ public class PrimaryController {
             final String contents = Files.readString(Paths.get(fileName));
             final JSONObject object = new JSONObject(contents);
             Iterator<String> dates = object.keys();
+            final Date active = Date.from(datePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
             final Date dateBegin = Date.from(begin.atStartOfDay(ZoneId.systemDefault()).toInstant());
             final Date dateEnd = Date.from(end.atStartOfDay(ZoneId.systemDefault()).toInstant());
             final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
             while (dates.hasNext()) {
                 final String key = dates.next();
                 final Date date = formatter.parse(key);
-                if (date.compareTo(dateBegin) >= 0 && date.compareTo(dateEnd) <= 0) {
+                if (date.compareTo(active) == 0) {
+                    for (var entry : classes.entrySet()) {
+                        classrooms.add(entry.getValue());
+                    }
+                }
+                else if (date.compareTo(dateBegin) >= 0 && date.compareTo(dateEnd) <= 0) {
                     classrooms.addAll(loadClassrooms(object.getJSONObject(key), false));
                 }
             }
@@ -301,6 +289,12 @@ public class PrimaryController {
                     ioe.printStackTrace();
                 }
             }
+        }
+    }
+
+    private void refreshPane() {
+        if (borderPane.getCenter() instanceof Refreshable) {
+            ((Refreshable) borderPane.getCenter()).refresh();
         }
     }
 

@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.function.Function;
 
-public class Group extends VBox {
+public class Group extends VBox implements Refreshable {
     static class TableGroup {
         public final ArrayList<String> names = new ArrayList<>();
 
@@ -233,5 +233,10 @@ public class Group extends VBox {
         Arrays.fill(groups, 0, extra, filled + 1);
         Arrays.fill(groups, extra, groups.length, filled);
         return new Grouping(score * 1.2, groups);
+    }
+
+    @Override
+    public void refresh() {
+
     }
 }
