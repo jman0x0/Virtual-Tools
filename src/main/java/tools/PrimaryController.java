@@ -319,7 +319,7 @@ public class PrimaryController {
             }
             if (access != null) {
                 for (var classroom : loadClassrooms(object.getJSONObject(access), true)) {
-                    classes.put(classroom.getName(), classroom);
+                    addClass(classroom.getName(), classroom);
                 }
             }
         }

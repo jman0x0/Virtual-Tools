@@ -67,7 +67,7 @@ public class HelpWindow extends VBox implements SubWindow {
         try {
             if (Desktop.isDesktopSupported()
                     && (desktop = Desktop.getDesktop()).isSupported(Desktop.Action.MAIL)) {
-                URI mailto = new URI("mailto:jman0x0@gmail.com?subject=Hello%20World");
+                URI mailto = new URI("mailto:jman0x0@gmail.com?subject=Virtual%20Tools%20-%20");
                 desktop.mail(mailto);
             }
         } catch (IOException | URISyntaxException ioe) {
@@ -78,7 +78,10 @@ public class HelpWindow extends VBox implements SubWindow {
     @FXML
     private void openSourcePage() {
         try {
-            Desktop.getDesktop().browse(new URI("https://github.com/jman0x0/Virtual-Tools/tree/master"));
+            if (Desktop.isDesktopSupported()) {
+                final String source = "https://github.com/jman0x0/Virtual-Tools/tree/master";
+                Desktop.getDesktop().browse(new URI(source));
+            }
         } catch (IOException | URISyntaxException ioe) {
             ioe.printStackTrace();
         }
@@ -86,11 +89,11 @@ public class HelpWindow extends VBox implements SubWindow {
 
     @FXML
     private void openDonationPage() {
-        if (!Desktop.isDesktopSupported()) {
-            return;
-        }
         try {
-            Desktop.getDesktop().browse(new URI("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=4KY8JM4V6TLTE&currency_code=USD&source=url"));
+            if (Desktop.isDesktopSupported()) {
+                final String donate = "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=4KY8JM4V6TLTE&currency_code=USD&source=url";
+                Desktop.getDesktop().browse(new URI(donate));
+            }
         } catch (IOException | URISyntaxException ioe) {
             ioe.printStackTrace();
         }
