@@ -204,8 +204,6 @@ public class Notes extends VBox implements Refreshable {
             dateBegin.setValue(controller.getActiveDate());
             dateEnd.setValue(controller.getActiveDate());
         }
-        else {
-            updateStudents();
-        }
+        updateStudents();
     }
 }

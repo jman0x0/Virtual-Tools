@@ -70,6 +70,7 @@ public class Attendance extends VBox implements Refreshable {
             Utilities.sortStudents(students, controller.getOrder());
         });
         display.setCellFactory(factory -> new StudentCell(itemToBoolean, controller));
+        listenToSheet();
         updateNames();
     }
 
@@ -123,13 +124,15 @@ public class Attendance extends VBox implements Refreshable {
         }
     }
 
-    public void attachListeners() {
-        sheet.setOnStudentMarked((student, checked) -> {
-            final var setting = AttendanceSheet.Filter.fromToggleGroup(filter, complete, present, absent);
-            if (checked && setting == AttendanceSheet.Filter.ABSENT || !checked && setting == AttendanceSheet.Filter.PRESENT) {
-                students.remove(student);
-            }
-        });
+    public void listenToSheet() {
+        if (sheet != null) {
+            sheet.setOnStudentMarked((student, checked) -> {
+                final var setting = AttendanceSheet.Filter.fromToggleGroup(filter, complete, present, absent);
+                if (checked && setting == AttendanceSheet.Filter.ABSENT || !checked && setting == AttendanceSheet.Filter.PRESENT) {
+                    students.remove(student);
+                }
+            });
+        }
     }
 
     @FXML
@@ -209,6 +212,7 @@ public class Attendance extends VBox implements Refreshable {
     public void refresh() {
         final var classroom = controller.getActiveClassroom();
         sheet = classroom == null ? null : classroom.getAttendanceSheet();
+        listenToSheet();
         updateNames();
     }
 }

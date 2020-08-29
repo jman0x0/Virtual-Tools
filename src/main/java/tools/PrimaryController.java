@@ -214,27 +214,26 @@ public class PrimaryController {
     public ArrayList<Classroom> getClassroomsInRange(LocalDate begin, LocalDate end) {
         final String fileName = CONFIG_FILE;
         final ArrayList<Classroom> classrooms = new ArrayList<>();
-        try {
-            if (!new File(fileName).exists()) {
-                return classrooms;
+        final Date active = Date.from(datePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        final Date dateBegin = Date.from(begin.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        final Date dateEnd = Date.from(end.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        if (dateBegin.compareTo(active) >= 0 && dateEnd.compareTo(active) <= 0) {
+            for (var entry : classes.entrySet()) {
+                classrooms.add(entry.getValue());
             }
-            final String contents = Files.readString(Paths.get(fileName));
-            final JSONObject object = new JSONObject(contents);
-            Iterator<String> dates = object.keys();
-            final Date active = Date.from(datePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-            final Date dateBegin = Date.from(begin.atStartOfDay(ZoneId.systemDefault()).toInstant());
-            final Date dateEnd = Date.from(end.atStartOfDay(ZoneId.systemDefault()).toInstant());
-            final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-            while (dates.hasNext()) {
-                final String key = dates.next();
-                final Date date = formatter.parse(key);
-                if (date.compareTo(active) == 0) {
-                    for (var entry : classes.entrySet()) {
-                        classrooms.add(entry.getValue());
+        }
+        try {
+            if (new File(fileName).exists()) {
+                final String contents = Files.readString(Paths.get(fileName));
+                final JSONObject object = new JSONObject(contents);
+                Iterator<String> dates = object.keys();
+                final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+                while (dates.hasNext()) {
+                    final String key = dates.next();
+                    final Date date = formatter.parse(key);
+                    if (date.compareTo(active) != 0 && date.compareTo(dateBegin) >= 0 && date.compareTo(dateEnd) <= 0) {
+                        classrooms.addAll(loadClassrooms(object.getJSONObject(key), false));
                     }
-                }
-                else if (date.compareTo(dateBegin) >= 0 && date.compareTo(dateEnd) <= 0) {
-                    classrooms.addAll(loadClassrooms(object.getJSONObject(key), false));
                 }
             }
         }
