@@ -34,12 +34,12 @@ public class HelpWindow extends VBox implements SubWindow {
 
     @Override
     public double getWindowWidth() {
-        return 560;
+        return 576;
     }
 
     @Override
     public double getWindowHeight() {
-        return 315 ;
+        return 324;
     }
 
     @FXML

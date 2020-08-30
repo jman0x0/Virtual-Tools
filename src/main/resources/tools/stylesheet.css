@@ -88,19 +88,17 @@
     -fx-font-size: 2em;
 }
 
-#help,
-#donate {
+#donate,
+#help {
     -fx-background-color: transparent;
 }
 
-#donate:hover
-{
+#donate:hover,
+#help:hover {
     -fx-cursor: hand;
 }
 
-#help:hover
-{
-    -fx-cursor: hand;
+#help:hover {
     -fx-scale-x: 1.0625;
     -fx-scale-y: 1.0625;
 }
@@ -109,8 +107,7 @@
     -fx-font-size: 1em;
 }
 
-#navigation .combo-box-popup .list-view
-{
+#navigation .combo-box-popup .list-view {
     -fx-font-size: 15px;
 }
 

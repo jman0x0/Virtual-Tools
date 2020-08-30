@@ -3,13 +3,9 @@ package tools;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
 import javafx.scene.layout.BorderPane;
-import javafx.util.Callback;
+import javafx.scene.layout.Region;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -29,10 +25,7 @@ public class Classes extends BorderPane implements Refreshable {
     @FXML
     private ObservableList<String> classes;
 
-    @FXML
-    private Button addStudent;
-
-    private ListChangeListener<String> listener = new ListChangeListener<String>() {
+    private ListChangeListener<String> classListener = new ListChangeListener<>() {
         @Override
         public void onChanged(Change<? extends String> change) {
             while (change.next()) {
@@ -41,10 +34,27 @@ public class Classes extends BorderPane implements Refreshable {
                 for (int i = 0; i < removed.size(); ++i) {
                     if (change.wasReplaced()) {
                         controller.updateClass(removed.get(i), added.get(i));
-                    }
-                    else {
+                    } else {
                         controller.removeClass(removed.get(i));
                     }
+                }
+            }
+        }
+    };
+
+    private ListChangeListener<String> studentListener = new ListChangeListener<String>() {
+        @Override
+        public void onChanged(Change<? extends String> change) {
+            if (classDisplay.getSelectionModel().isEmpty()) {
+                return;
+            }
+            final String classname = classDisplay.getSelectionModel().getSelectedItem();
+            final Classroom classroom = controller.getClassroom(classname);
+            while (change.next()) {
+                final var removed = change.getRemoved();
+
+                for (int i = 0; i < removed.size(); ++i) {
+                    classroom.remove(classroom.findStudent(removed.get(i)));
                 }
             }
         }
@@ -62,6 +72,7 @@ public class Classes extends BorderPane implements Refreshable {
     @FXML
     public void initialize() {
         classDisplay.setCellFactory(factory -> new RemovableCell());
+        studentDisplay.setCellFactory(factory -> new RemovableCell());
         updateStudents();
         classDisplay.getSelectionModel().selectedItemProperty().addListener((observableValue, old, current) -> {
             classroom = controller.getClassroom(current);
@@ -71,11 +82,13 @@ public class Classes extends BorderPane implements Refreshable {
         controller.listenToOrderChange((observableValue, toggle, t1) -> {
             updateStudents();
         });
-        classDisplay.getItems().addListener(listener);
+        classes.addListener(classListener);
+        students.addListener(studentListener);
         classes.addAll(controller.getClassSet());
         if (!classes.isEmpty() && classDisplay.getSelectionModel().getSelectedItem() == null) {
             classDisplay.getSelectionModel().select(0);
         }
+
     }
 
     public void loadRoster(File file) {
@@ -187,13 +200,28 @@ public class Classes extends BorderPane implements Refreshable {
     public void refresh() {
         final int selected = classDisplay.getSelectionModel().getSelectedIndex();
         final String selection = selected >= 0 ? classes.get(selected) : null;
-        classes.removeListener(listener);
+        classes.removeListener(classListener);
         classes.clear();
         classes.addAll(controller.getClassSet());
-        classes.addListener(listener);
+        classes.addListener(classListener);
         final var position = classes.indexOf(selection);
         if (position >= 0) {
             classDisplay.getSelectionModel().select(position);
+        }
+    }
+
+    @FXML
+    public void addStudent() {
+        if (classDisplay.getSelectionModel().isEmpty()) {
+            return;
+        }
+        final var component = Utilities.<Region, AddStudent>loadFXML("add_student.fxml");
+        component.getValue().display(App.STAGE_STACK.peek());
+        final Student created = component.getValue().getStudent();
+        if (created != null) {
+            final String item = classDisplay.getSelectionModel().getSelectedItem();
+            controller.getClassroom(item).add(created);
+            updateStudents();
         }
     }
 }

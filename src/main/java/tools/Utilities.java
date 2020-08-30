@@ -68,4 +68,19 @@ public class Utilities {
             }
         });
     }
+
+    public static <NodeType, Controller> javafx.util.Pair<NodeType, Controller> loadFXML(String pathway) {
+        final FXMLLoader loader = new FXMLLoader(Utilities.class.getResource(pathway));
+        NodeType model = null;
+        Controller controller = null;
+
+        try {
+            model = loader.load();
+            controller = loader.getController();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+
+        return new javafx.util.Pair<>(model, controller);
+    }
 }

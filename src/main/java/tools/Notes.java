@@ -9,7 +9,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -159,7 +158,7 @@ public class Notes extends VBox implements Refreshable {
         final StringBuilder builder = new StringBuilder();
         for (var classroom : classrooms) {
             if (activeSubject.getName().equals(classroom.getName())) {
-                final Student managed = classroom.getStudentFromName(student.getFirstLast());
+                final Student managed = classroom.findStudent(student.getFirstLast());
                 builder.append(classroom.getNotebook().getNote(managed)).append('\n');
             }
         }

@@ -88,11 +88,13 @@
                     <TextFlow>
                         <Text text="The"/>
                         <Text style="-fx-font-weight: bold" text=" Notes "/>
-                        <Text text="section is where notes for students can be viewed and added."/>
+                        <Text text="section is where notes for students can be viewed and edited."/>
                     </TextFlow>
                     <Label wrapText="true" text="    •Make sure that you are viewing notes for the appropriate class."/>
                     <Label wrapText="true" text="        •Select the appropriate class with the ComboBox on the navigation bar."/>
                     <Label wrapText="true" text="    •Select a student to view and edit that student's notes."/>
+                    <Label wrapText="true" text="    •To tally points throughout a range use begin and end date picker ranges."/>
+                    <Label wrapText="true" text="        •Currently a student's notes are day specific and cannot be viewed from a range."/>
                 </VBox>
             </Tab>
             <Tab text="About" closable="false">

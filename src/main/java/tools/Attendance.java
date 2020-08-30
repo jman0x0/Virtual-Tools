@@ -163,10 +163,10 @@ public class Attendance extends VBox implements Refreshable {
     }
 
     public void updateNames() {
+        clearDisplay();
         if (sheet == null) {
             return;
         }
-        clearDisplay();
         final var setting = AttendanceSheet.Filter.fromToggleGroup(filter, complete, present, absent);
         final var roster = sheet.getRoster(setting);
         if (roster != null) {

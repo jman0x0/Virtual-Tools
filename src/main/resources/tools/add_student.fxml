@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
+<?import java.lang.Double?>
+
+<VBox fx:id="root" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="tools.AddStudent">
+    <fx:define>
+        <ToggleGroup fx:id="format"/>
+        <Double fx:value="80.0" fx:id="labelWidth"/>
+    </fx:define>
+    <VBox spacing="4" VBox.vgrow="ALWAYS">
+        <HBox>
+            <Label prefWidth="$labelWidth" text="Full Name:"/>
+            <TextField HBox.hgrow="ALWAYS" fx:id="fullName"/>
+        </HBox>
+        <HBox>
+            <Label prefWidth="$labelWidth" text="Format:"/>
+            <RadioButton fx:id="firstLast" text="First, Last" toggleGroup="$format">
+                <HBox.margin>
+                    <Insets right="8"/>
+                </HBox.margin>
+            </RadioButton>
+            <RadioButton fx:id="lastFirst" text="Last, First" toggleGroup="$format" selected="true"/>
+        </HBox>
+
+        <Separator orientation="HORIZONTAL"/>
+        <HBox>
+            <Label prefWidth="$labelWidth" text="First Name:"/>
+            <TextField HBox.hgrow="ALWAYS" fx:id="firstName" editable="false"/>
+        </HBox>
+        <HBox>
+            <Label prefWidth="$labelWidth" text="Last Name:"/>
+            <TextField HBox.hgrow="ALWAYS" fx:id="lastName" editable="false"/>
+        </HBox>
+        <Pane VBox.vgrow="ALWAYS" maxHeight="Infinity"/>
+        <HBox spacing="20">
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Button text="Cancel" onAction="#close"/>
+            <Button text="Confirm" onAction="#confirm"/>
+        </HBox>
+
+        <VBox.margin>
+            <Insets topRightBottomLeft="8"/>
+        </VBox.margin>
+    </VBox>
+</VBox>

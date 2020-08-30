@@ -38,9 +38,11 @@ public class Classroom implements Iterable<Student> {
         attendanceSheet.clear();
     }
 
-    public Student getStudentFromName(String firstLast) {
+    public Student findStudent(String name) {
         for (var student : students) {
-            if (student.getFirstLast().equals(firstLast)) {
+            if (student.getFirstLast().equals(name) ||
+                student.getLastFirst().equals(name) ||
+                student.getFullName().equals(name)) {
                 return student;
             }
         }
