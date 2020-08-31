@@ -73,6 +73,14 @@
     -fx-text-fill: Black;
 }
 
+.iconButton {
+    -fx-background-color: transparent;
+}
+
+.iconButton:hover ImageView {
+    -fx-effect: dropshadow( gaussian, #cad8ff, 3, 1, 0, 0);
+}
+
 .draggable {
     -fx-font-size: 2em;
     -fx-font-weight: bold;

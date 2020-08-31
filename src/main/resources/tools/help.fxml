@@ -26,8 +26,9 @@
                             <Text style="-fx-font-weight: bold" text=" Classes "/>
                             <Text text="section is where classes can be added or removed."/>
                         </TextFlow>
-                        <Label wrapText="true" text="    •To add a class click &quot;Add Class&quot; button."/>
-                        <Label wrapText="true" text="    •To remove a class click the Trash icon on the class you want to remove."/>
+                        <Label wrapText="true" text="    •To add a class or student click the button with &quot;+&quot; icon."/>
+                        <Label wrapText="true" text="    •To remove a class or student click the Trash icon on the class you want to remove."/>
+                        <Label wrapText="true" text="    •To change the class order use the up and down arrow buttons."/>
                         <Label wrapText="true" text="Note that class rosters will be saved upon closing the application. Additionally, previously added rosters will be loaded when the application starts up. Specifically, the most recent roster is initially loaded."/>
                     </VBox>
                 </content>
