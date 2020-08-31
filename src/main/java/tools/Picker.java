@@ -150,6 +150,9 @@ public class Picker extends StackPane implements Refreshable {
             notebook = controller.getActiveClassroom().getNotebook();
             setStudent(student);
         }
+        else {
+            setStudent(null);
+        }
         animating = false;
     }
 
@@ -169,11 +172,15 @@ public class Picker extends StackPane implements Refreshable {
 
     private void setStudent(Student student) {
         this.student = student;
-        if (controller.getOrder() == PrimaryController.Order.FIRST_LAST) {
-            picked.setText(student.getFirstLast());
+        if (student == null) {
+            picked.setText("*NO STUDENT*");
         }
         else {
-            picked.setText(student.getLastFirst());
+            if (controller.getOrder() == PrimaryController.Order.FIRST_LAST) {
+                picked.setText(student.getFirstLast());
+            } else {
+                picked.setText(student.getLastFirst());
+            }
         }
         if (noteViewer != null) {
             noteViewer.setStudentAndBook(this.student, this.notebook);
