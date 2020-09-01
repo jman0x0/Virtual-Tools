@@ -206,7 +206,10 @@ public class PrimaryController {
                 }
             }
         }
-        catch (JSONException | IOException jse) {
+        catch (JSONException ignored) {
+
+        }
+        catch (IOException jse) {
             jse.printStackTrace();
         }
     }
@@ -277,6 +280,9 @@ public class PrimaryController {
             writer = new FileWriter(new File(Paths.get(fileName).toUri()));
             writer.write(root.toString());
         }
+        catch (JSONException ignored) {
+
+        }
         catch (IOException ioe) {
             ioe.printStackTrace();
         }
@@ -322,6 +328,9 @@ public class PrimaryController {
                 }
             }
         }
+        catch (JSONException ignored) {
+
+        }
         catch (IOException | ParseException ioe) {
             ioe.printStackTrace();
         }
@@ -331,7 +340,7 @@ public class PrimaryController {
         try {
             return new JSONObject(Files.readString(Paths.get(fileName)));
         }
-        catch (IOException ignored) {
+        catch (IOException | JSONException ignored) {
             return new JSONObject();
         }
     }

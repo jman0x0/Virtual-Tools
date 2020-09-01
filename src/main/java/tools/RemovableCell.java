@@ -10,15 +10,19 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
+import java.util.function.Consumer;
+
 class RemovableCell extends ListCell<String> {
     private static final Image TRASH = new Image(RemovableCell.class.getResourceAsStream("trash.png"));
     private final HBox box = new HBox();
     private final Label label = new Label();
     private final Button button = new Button();
     private final TextField textField = new TextField();
+    private final Consumer<Integer> removeHandler;
 
-    public RemovableCell() {
+    public RemovableCell(Consumer<Integer> removeHandler) {
         super();
+        this.removeHandler = removeHandler;
         label.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(label, Priority.ALWAYS);
         box.getChildren().addAll(label, button);
@@ -32,12 +36,7 @@ class RemovableCell extends ListCell<String> {
             }
         });
 
-        button.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                getListView().getItems().remove(label.getText());
-            }
-        });
+        button.setOnAction(event -> removeHandler.accept(getIndex()));
     }
 
     @Override

@@ -2,6 +2,9 @@ package tools;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 
 import java.io.IOException;
 import java.util.*;
@@ -82,5 +85,16 @@ public class Utilities {
         }
 
         return new javafx.util.Pair<>(model, controller);
+    }
+
+    public static Optional<ButtonType> showAlert(String title, String header, String content, String actionName) {
+        final ButtonType action = new ButtonType(actionName, ButtonBar.ButtonData.OK_DONE);
+        final Alert alert = new Alert(Alert.AlertType.WARNING, content, action, ButtonType.CANCEL);
+        alert.setTitle("Virtual Tools - " + title);
+        alert.setHeaderText(header);
+        alert.setResizable(false);
+        alert.setWidth(390);
+        alert.setHeight(260);
+        return alert.showAndWait();
     }
 }

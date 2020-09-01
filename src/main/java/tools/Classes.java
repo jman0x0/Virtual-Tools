@@ -3,6 +3,8 @@ package tools;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
@@ -11,6 +13,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class Classes extends BorderPane implements Refreshable {
     @FXML
@@ -25,7 +28,7 @@ public class Classes extends BorderPane implements Refreshable {
     @FXML
     private ObservableList<String> classes;
 
-    private ListChangeListener<String> classListener = new ListChangeListener<>() {
+    private final ListChangeListener<String> classListener = new ListChangeListener<>() {
         @Override
         public void onChanged(Change<? extends String> change) {
             while (change.next()) {
@@ -34,27 +37,7 @@ public class Classes extends BorderPane implements Refreshable {
                 for (int i = 0; i < removed.size(); ++i) {
                     if (change.wasReplaced()) {
                         controller.updateClass(removed.get(i), added.get(i));
-                    } else {
-                        controller.removeClass(removed.get(i));
                     }
-                }
-            }
-        }
-    };
-
-    private ListChangeListener<String> studentListener = new ListChangeListener<String>() {
-        @Override
-        public void onChanged(Change<? extends String> change) {
-            if (classDisplay.getSelectionModel().isEmpty()) {
-                return;
-            }
-            final String classname = classDisplay.getSelectionModel().getSelectedItem();
-            final Classroom classroom = controller.getClassroom(classname);
-            while (change.next()) {
-                final var removed = change.getRemoved();
-
-                for (int i = 0; i < removed.size(); ++i) {
-                    classroom.remove(classroom.findStudent(removed.get(i)));
                 }
             }
         }
@@ -71,8 +54,27 @@ public class Classes extends BorderPane implements Refreshable {
 
     @FXML
     public void initialize() {
-        classDisplay.setCellFactory(factory -> new RemovableCell());
-        studentDisplay.setCellFactory(factory -> new RemovableCell());
+        classDisplay.setCellFactory(factory -> new RemovableCell(index -> {
+            final String subject = classes.get(index);
+            final String title = "Delete Class";
+            final String header = "Warning - Deleting a Class";
+            final String content = "If you choose Delete, then the class \"" + subject + "\" will have its attendance and notes permanently erased for that date, unless a backup has explicitly been made beforehand.";
+            if (Utilities.showAlert(title, header, content, "Delete").get() != ButtonType.CANCEL) {
+                classes.remove(index.intValue());
+                controller.removeClass(subject);
+            }
+        }));
+        studentDisplay.setCellFactory(factory -> new RemovableCell(index -> {
+            if (classDisplay.getSelectionModel().isEmpty()) {
+                return;
+            }
+            final String classname = classDisplay.getSelectionModel().getSelectedItem();
+            final Classroom classroom = controller.getClassroom(classname);
+            if (classroom != null) {
+                final String name = students.remove(index.intValue());
+                classroom.remove(classroom.findStudent(name));
+            }
+        }));
         updateStudents();
         classDisplay.getSelectionModel().selectedItemProperty().addListener((observableValue, old, current) -> {
             classroom = controller.getClassroom(current);
@@ -83,7 +85,6 @@ public class Classes extends BorderPane implements Refreshable {
             updateStudents();
         });
         classes.addListener(classListener);
-        students.addListener(studentListener);
         classes.addAll(controller.getClassSet());
         if (!classes.isEmpty() && classDisplay.getSelectionModel().getSelectedItem() == null) {
             classDisplay.getSelectionModel().select(0);
@@ -131,6 +132,7 @@ public class Classes extends BorderPane implements Refreshable {
 
     public void updateStudents() {
         students.clear();
+
         if (classroom == null) {
             return;
         }
@@ -142,11 +144,13 @@ public class Classes extends BorderPane implements Refreshable {
                 students.add(value.toString());
             }
         }
+
         students.sort((String lhsName, String rhsName) -> {
             final String[] lhs = Utilities.extractWords(lhsName);
             final String[] rhs = Utilities.extractWords(rhsName);
             return Arrays.compare(lhs, rhs);
         });
+
     }
 
     @FXML
