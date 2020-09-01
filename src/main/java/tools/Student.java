@@ -9,11 +9,11 @@ import java.util.regex.Pattern;
 public class Student {
     private final ArrayList<String> firstNames = new ArrayList<>();
     private final ArrayList<String> lastNames  = new ArrayList<>();
-    private String fullName;
+    private final String fullName;
 
     public Student(String fullName) throws IllegalArgumentException {
         final String[] split = fullName.split(",");
-        if (split.length != 2) {
+        if (split.length < 2) {
             throw new IllegalArgumentException("Full must be composed of first and last names separated by a single comma");
         }
         final var list = Arrays.asList(lastNames, firstNames);
