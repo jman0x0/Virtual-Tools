@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Stack;
 
 public class App extends Application {
@@ -26,7 +26,28 @@ public class App extends Application {
         primaryStage.show();
     }
 
+    public static void closeQuietly(Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (IOException ignored) {
+                // ignore ... this is catastrophic
+            }
+        }
+    }
+
     public static void main(String[] args) {
-        launch();
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream("error_log.txt");
+            System.setErr(new PrintStream(fos));
+        }
+        catch (FileNotFoundException ignored) {
+
+        }
+        finally {
+            launch();
+            closeQuietly(fos);
+        }
     }
 }

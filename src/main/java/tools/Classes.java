@@ -105,7 +105,7 @@ public class Classes extends BorderPane implements Refreshable {
                     students.add(new Student(line));
                 }
                 catch (IllegalArgumentException iae) {
-                    //iae.printStackTrace();
+                    iae.printStackTrace();
                 }
             }
             if (controller.addClass(name) == null) {

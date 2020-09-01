@@ -3,3 +3,4 @@ configuration.json
 .idea/
 *.iml
 ideas.txt
+error_log.txt
