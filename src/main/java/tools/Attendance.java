@@ -150,16 +150,16 @@ public class Attendance extends VBox implements Refreshable {
     public void clearAll() {
         if (sheet != null) {
             sheet.clear();
+            updateNames();
         }
-        display.refresh();
     }
 
     @FXML
     public void checkAll() {
         if (sheet != null) {
             sheet.checkAll();
+            updateNames();
         }
-        display.refresh();
     }
 
     public void updateNames() {

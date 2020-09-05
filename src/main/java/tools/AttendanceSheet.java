@@ -89,10 +89,7 @@ public class AttendanceSheet {
         final ArrayList<Student> marked = new ArrayList<>();
         for (var student : roster) {
             final var property = sheet.get(student);
-            if (property == null) {
-                continue;
-            }
-            final var present = property.getValue();
+            final boolean present = property != null && property.get();
             if (!present && filter == Filter.ABSENT || present && filter == Filter.PRESENT) {
                 marked.add(student);
             }

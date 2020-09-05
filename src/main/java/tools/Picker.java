@@ -4,7 +4,6 @@ package tools;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.CheckBox;
@@ -15,8 +14,8 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Stack;
 
 public class Picker extends StackPane implements Refreshable {
     @FXML
@@ -34,11 +33,9 @@ public class Picker extends StackPane implements Refreshable {
     @FXML
     private AnimatedImageView gifView;
 
-    private Notebook notebook = null;
-
     private Student student = null;
 
-    private ArrayList<Student> SHUFFLED = new ArrayList<>();
+    private Stack<Student> shuffle = new Stack<>();
 
     private final PrimaryController controller;
 
@@ -89,13 +86,9 @@ public class Picker extends StackPane implements Refreshable {
         if (animating) {
             return;
         }
-        if (SHUFFLED.isEmpty()) {
-            restock();
-        }
         animating = true;
-
         if (!animation.isSelected()) {
-            finalizePick(null);
+            finalizePick();
         }
         else {
             final int cycles = 10;
@@ -133,41 +126,53 @@ public class Picker extends StackPane implements Refreshable {
                 finish.setDuration(duration.divide(2));
                 finish.setNode(hat);
                 finish.play();
-                finish.setOnFinished(this::finalizePick);
+                finish.setOnFinished(action -> finalizePick());
             });
         }
     }
 
-    private void finalizePick(ActionEvent actionEvent) {
+    private void finalizePick() {
         if (animation.isSelected()) {
             gifView.play();
             gifView.setScaleX(1.25);
             gifView.setLayoutX(hat.getLayoutX() - hat.getImage().getWidth());
             gifView.setLayoutY(-hat.getImage().getHeight());
         }
-        if (!SHUFFLED.isEmpty()) {
-            final Student student = SHUFFLED.remove(SHUFFLED.size() - 1);
-            notebook = controller.getActiveClassroom().getNotebook();
-            setStudent(student);
-        }
-        else {
-            setStudent(null);
-        }
+        setStudent(fetchStudent());
         animating = false;
     }
 
-    private void restock() {
+    private Student fetchStudent() {
+        final var classroom = controller.getActiveClassroom();
+        if ((shuffle.isEmpty() && !restock()) || classroom == null) {
+            return null;
+        }
+        final AttendanceSheet attendance = classroom.getAttendanceSheet();
+        final boolean presentOnly = present.isSelected();
+        while (!shuffle.isEmpty()) {
+            final Student student = shuffle.pop();
+
+            if (!presentOnly || attendance.get(student).getValue()) {
+                return student;
+            }
+        }
+        return null;
+    }
+
+    private boolean restock() {
         final var classroom = controller.getActiveClassroom();
         if (classroom == null) {
-            return;
+            return false;
         }
+
         if (!present.isSelected()) {
-            SHUFFLED = new ArrayList<>(classroom.getStudents());
+            shuffle.addAll(classroom.getStudents());
         }
         else {
-            SHUFFLED = classroom.getAttendanceSheet().getRoster(AttendanceSheet.Filter.PRESENT);
+            shuffle.addAll(classroom.getAttendanceSheet().getRoster(AttendanceSheet.Filter.PRESENT));
         }
-        Collections.shuffle(SHUFFLED);
+        Collections.shuffle(shuffle);
+        return !shuffle.isEmpty();
     }
 
     private void setStudent(Student student) {
@@ -175,24 +180,27 @@ public class Picker extends StackPane implements Refreshable {
         if (student == null) {
             picked.setText("*NO STUDENT*");
         }
-        else {
-            if (controller.getOrder() == PrimaryController.Order.FIRST_LAST) {
-                picked.setText(student.getFirstLast());
-            } else {
-                picked.setText(student.getLastFirst());
-            }
+        else if (controller.getOrder() == PrimaryController.Order.FIRST_LAST) {
+            picked.setText(student.getFirstLast());
         }
-        if (noteViewer != null) {
-            noteViewer.setStudentAndBook(this.student, this.notebook);
+        else {
+            picked.setText(student.getLastFirst());
+        }
+
+        final Classroom classroom = controller.getActiveClassroom();
+        if (noteViewer != null && classroom != null) {
+            noteViewer.setStudentAndBook(this.student, classroom.getNotebook());
         }
     }
 
     @FXML
     private void noteStudent() {
-        if (notebook == null) {
+        final Classroom classroom = controller.getActiveClassroom();
+        if (classroom == null || student == null) {
             return;
         }
-        noteViewer.setStudentAndBook(this.student, this.notebook);
+        final Notebook notebook = controller.getActiveClassroom().getNotebook();
+        noteViewer.setStudentAndBook(student, notebook);
         noteViewer.show();
     }
 
