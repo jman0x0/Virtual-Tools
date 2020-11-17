@@ -12,15 +12,31 @@
 <?import javafx.geometry.Insets?>
 <?import java.lang.Double?>
 
+<?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.text.Text?>
 <VBox fx:id="root" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="tools.AddStudent">
     <fx:define>
         <ToggleGroup fx:id="format"/>
         <Double fx:value="80.0" fx:id="labelWidth"/>
     </fx:define>
-    <VBox spacing="4" VBox.vgrow="ALWAYS">
+    <VBox spacing="6" VBox.vgrow="ALWAYS">
         <HBox>
             <Label prefWidth="$labelWidth" text="Full Name:"/>
             <TextField HBox.hgrow="ALWAYS" fx:id="fullName"/>
+        </HBox>
+        <HBox>
+            <Pane HBox.hgrow="SOMETIMES" minWidth="$labelWidth"/>
+            <TextFlow>
+                <Text text="* Parts of name must be separated with a comma "/>
+                <Text style="-fx-font-size: 24px" text=","/>
+                <HBox.margin>
+                    <Insets top="-12"/>
+                </HBox.margin>
+            </TextFlow>
+            <Pane HBox.hgrow="SOMETIMES"/>
+            <VBox.margin>
+                <Insets bottom="4"/>
+            </VBox.margin>
         </HBox>
         <HBox>
             <Label prefWidth="$labelWidth" text="Format:"/>
@@ -32,7 +48,11 @@
             <RadioButton fx:id="lastFirst" text="Last, First" toggleGroup="$format" selected="true"/>
         </HBox>
 
-        <Separator orientation="HORIZONTAL"/>
+        <Separator orientation="HORIZONTAL">
+            <VBox.margin>
+                <Insets top="4" bottom="4"/>
+            </VBox.margin>
+        </Separator>
         <HBox>
             <Label prefWidth="$labelWidth" text="First Name:"/>
             <TextField HBox.hgrow="ALWAYS" fx:id="firstName" editable="false"/>

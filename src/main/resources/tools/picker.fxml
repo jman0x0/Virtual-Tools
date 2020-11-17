@@ -10,8 +10,11 @@
 <?import javafx.scene.layout.StackPane?>
 <?import tools.AnimatedImageView?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory?>
 
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Spinner?>
 <fx:root type="javafx.scene.layout.StackPane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@stylesheet.css" maxHeight="Infinity" maxWidth="Infinity">
     <TitledPane text="Picker" collapsible="false" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="ALWAYS">
         <StackPane.margin>
@@ -20,13 +23,10 @@
         <StackPane>
             <VBox fx:id="picker" alignment="CENTER">
                 <StackPane>
-                    <VBox.margin>
-                        <Insets bottom="120"/>
-                    </VBox.margin>
                     <Label fx:id="picked" alignment="CENTER" maxWidth="Infinity">
 
                     </Label>
-                    <Button StackPane.alignment="CENTER_RIGHT" onAction="#noteStudent">
+                    <Button StackPane.alignment="CENTER_RIGHT" onAction="#noteStudent" minWidth="64">
                         <graphic>
                             <ImageView>
                                 <image>
@@ -36,6 +36,36 @@
                         </graphic>
                     </Button>
                 </StackPane>
+                <HBox spacing="8" alignment="TOP_CENTER">
+                    <Label fx:id="notification" style="-fx-font-size: 16px; -fx-text-fill: DimGrey;"/>
+                    <Pane HBox.hgrow="ALWAYS"/>
+                    <Button styleClass="iconButton" onAction="#increment">
+                        <graphic>
+                            <ImageView>
+                                <image>
+                                    <Image url="@green_plus.png"/>
+                                </image>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                    <Button styleClass="iconButton" onAction="#decrement">
+                        <graphic>
+                            <ImageView>
+                                <image>
+                                    <Image url="@red_plus.png"/>
+                                </image>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                    <Spinner fx:id="macroMagnitude" editable="false" maxWidth="64">
+                        <valueFactory>
+                            <SpinnerValueFactory.IntegerSpinnerValueFactory min="-100" initialValue="1" max="100"/>
+                        </valueFactory>
+                    </Spinner>
+                    <VBox.margin>
+                        <Insets bottom="120"/>
+                    </VBox.margin>
+                </HBox>
                 <ImageView fx:id="hat">
                     <image>
                         <Image url="@black_top_hat.png"/>

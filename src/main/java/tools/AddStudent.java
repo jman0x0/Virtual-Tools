@@ -50,12 +50,12 @@ public class AddStudent implements SubWindow {
 
     @Override
     public double getWindowWidth() {
-        return 400;
+        return 480;
     }
 
     @Override
     public double getWindowHeight() {
-        return 225;
+        return 270;
     }
 
     public Student getStudent() {

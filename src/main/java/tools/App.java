@@ -22,7 +22,7 @@ public class App extends Application {
         final Parent root = loader.load();
         primaryStage.setTitle("Virtual Tools");
         primaryStage.getIcons().addAll(new Image(getClass().getResourceAsStream("tools.png")));
-        primaryStage.setScene(new Scene(root, 825, 0));
+        primaryStage.setScene(new Scene(root, 910, 0));
         primaryStage.show();
     }
 

@@ -9,9 +9,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
@@ -37,6 +40,9 @@ public class Notes extends VBox implements Refreshable {
 
     @FXML
     private ToggleButton nonEmpty;
+
+    @FXML
+    private Spinner<Integer> macroMagnitude;
 
     private final PrimaryController controller;
 
@@ -204,5 +210,25 @@ public class Notes extends VBox implements Refreshable {
             dateEnd.setValue(controller.getActiveDate());
         }
         updateStudents();
+    }
+
+    private void addPoint(Integer credit) {
+        if (noteArea.isDisabled()) {
+            return;
+        }
+        final String timeStamp = Utilities.getTimeStamp();
+        final String separator = noteArea.getText().isEmpty() ? "" : "\n";
+        final String sign = credit >= 0 ? "+" : "";
+        noteArea.setText(noteArea.getText() + separator + sign + credit + " Credit " + timeStamp);
+    }
+
+    @FXML
+    private void increment() {
+        addPoint(macroMagnitude.getValue());
+    }
+
+    @FXML
+    private void decrement() {
+        addPoint(-macroMagnitude.getValue());
     }
 }

@@ -121,20 +121,22 @@ public class NoteViewer {
     }
 
     private void updateNotebook(Observable observable, String old, String current) {
-        if (notebook != null || student != null) {
+        if (notebook != null && student != null) {
             notebook.setNote(student, current);
         }
     }
 
+    public void creditStudent(Student student, Integer credit) {
+        final String timeStamp = Utilities.getTimeStamp();
+        final String separator = noteArea.getText().isEmpty() ? "" : "\n";
+        final String sign = credit >= 0 ? "+" : "";
+        noteArea.setText(noteArea.getText() + separator + sign + credit + " Credit " + timeStamp);
+    }
+
     @FXML
     private void credit(ActionEvent actionEvent) {
-        if (notebook != null || student != null) {
-            final DateFormat date = new SimpleDateFormat("MM/dd/yyyy@hh:mm a");
-            final String timeStamp = date.format(Calendar.getInstance().getTime());
-            final String separator = noteArea.getText().isEmpty() ? "" : "\n";
-            final Integer credit = creditField.getValue();
-            final String sign = credit >= 0 ? "+" : "";
-            noteArea.setText(noteArea.getText() + separator + sign + credit + " Credit " + timeStamp);
+        if (notebook != null && student != null) {
+            creditStudent(student, creditField.getValue());
         }
     }
 }

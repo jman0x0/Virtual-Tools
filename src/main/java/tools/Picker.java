@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -32,6 +33,12 @@ public class Picker extends StackPane implements Refreshable {
 
     @FXML
     private AnimatedImageView gifView;
+
+    @FXML
+    private Spinner<Integer> macroMagnitude;
+
+    @FXML
+    private Label notification;
 
     private Student student = null;
 
@@ -191,6 +198,20 @@ public class Picker extends StackPane implements Refreshable {
         if (noteViewer != null && classroom != null) {
             noteViewer.setStudentAndBook(this.student, classroom.getNotebook());
         }
+        notification.setText(null);
+    }
+
+    public void addPoint(Integer value) {
+        if (student == null) {
+            return;
+        }
+        noteViewer.creditStudent(student, value);
+        if (controller.getOrder() == PrimaryController.Order.FIRST_LAST) {
+            notification.setText(value + " point to " + student.getFirstLast());
+        }
+        else {
+            notification.setText(value + " point to " + student.getLastFirst());
+        }
     }
 
     @FXML
@@ -202,6 +223,16 @@ public class Picker extends StackPane implements Refreshable {
         final Notebook notebook = controller.getActiveClassroom().getNotebook();
         noteViewer.setStudentAndBook(student, notebook);
         noteViewer.show();
+    }
+
+    @FXML
+    private void increment() {
+        addPoint(macroMagnitude.getValue());
+    }
+
+    @FXML
+    private void decrement() {
+        addPoint(-macroMagnitude.getValue());
     }
 
     @Override

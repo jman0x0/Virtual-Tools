@@ -81,6 +81,10 @@
     -fx-effect: dropshadow( gaussian, #cad8ff, 3, 1, 0, 0);
 }
 
+.iconButton:pressed {
+    -fx-effect: dropshadow( gaussian, #cad8ff88, 2, 1, 0, 0);
+}
+
 .draggable {
     -fx-font-size: 2em;
     -fx-font-weight: bold;
@@ -148,4 +152,9 @@
 }
 .minimalTable .table-row-cell{
     -fx-table-cell-border-color: transparent;
+}
+
+.tienne {
+    -fx-font-family: "Tienne";
+    -fx-font-size: 1.6em;
 }

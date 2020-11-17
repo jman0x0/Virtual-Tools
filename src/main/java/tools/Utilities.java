@@ -1,12 +1,17 @@
 package tools;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -90,11 +95,19 @@ public class Utilities {
     public static Optional<ButtonType> showAlert(String title, String header, String content, String actionName) {
         final ButtonType action = new ButtonType(actionName, ButtonBar.ButtonData.OK_DONE);
         final Alert alert = new Alert(Alert.AlertType.WARNING, content, action, ButtonType.CANCEL);
+        final Stage stage = (Stage)alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().addAll(App.STAGE_STACK.peek().getIcons());
         alert.setTitle("Virtual Tools - " + title);
         alert.setHeaderText(header);
         alert.setResizable(false);
         alert.setWidth(390);
         alert.setHeight(260);
+        Platform.runLater(() -> alert.getDialogPane().lookupButton(ButtonType.CANCEL).requestFocus());
         return alert.showAndWait();
+    }
+
+    public static String getTimeStamp() {
+        final DateFormat date = new SimpleDateFormat("MM/dd/yyyy@hh:mm a");
+        return date.format(Calendar.getInstance().getTime());
     }
 }
