@@ -119,6 +119,11 @@
                         </Hyperlink>
                         <Pane HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
                     </HBox>
+                    <HBox>
+                        <Pane HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <Label text="Version 1.4"/>
+                        <Pane HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    </HBox>
                 </VBox>
             </Tab>
         </tabs>
