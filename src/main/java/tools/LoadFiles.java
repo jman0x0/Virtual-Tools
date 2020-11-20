@@ -11,7 +11,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 
 import java.io.File;
-import java.util.Arrays;
 
 public class LoadFiles extends BorderPane implements SubWindow {
     @FXML

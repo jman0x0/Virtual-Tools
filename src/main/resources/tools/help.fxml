@@ -121,7 +121,7 @@
                     </HBox>
                     <HBox>
                         <Pane HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                        <Label text="Version 1.4"/>
+                        <Label text="Version 1.4.1"/>
                         <Pane HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
                     </HBox>
                 </VBox>

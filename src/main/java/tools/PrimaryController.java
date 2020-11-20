@@ -29,7 +29,7 @@ public class PrimaryController {
         LAST_FIRST
     }
 
-    private Map<String, Classroom> classes = new LinkedHashMap<>();
+    private final Map<String, Classroom> classes = new LinkedHashMap<>();
 
     private final String CONFIG_FILE = "configuration.json";
 
