@@ -47,7 +47,7 @@
     -fx-text-fill: black;
 }
 
-#navigation > * > .label {
+#navigation .label {
     -fx-text-fill: White;
 }
 
@@ -156,9 +156,4 @@
 }
 .minimalTable .table-row-cell{
     -fx-table-cell-border-color: transparent;
-}
-
-.tienne {
-    -fx-font-family: "Tienne";
-    -fx-font-size: 1.6em;
 }

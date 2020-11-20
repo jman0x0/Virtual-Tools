@@ -1,5 +1,6 @@
 package tools;
 
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
@@ -22,6 +23,10 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PrimaryController {
     public enum Order {
@@ -36,6 +41,14 @@ public class PrimaryController {
     private final HashMap<String, Node> PANES = new HashMap<>();
 
     private final BooleanProperty classesOnly = new SimpleBooleanProperty(true);
+
+    private final AtomicBoolean updating = new AtomicBoolean(false);
+
+    private ScheduledExecutorService updater = Executors.newSingleThreadScheduledExecutor();
+
+    private long start = 0;
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
     @FXML
     private ToggleGroup order;
@@ -59,7 +72,34 @@ public class PrimaryController {
     private DatePicker datePicker;
 
     @FXML
+    private Button updateButton;
+
+    @FXML
+    private ProgressBar updateProgress;
+
+    @FXML
     protected void initialize() {
+        final long delay = 16;
+
+        updater.scheduleAtFixedRate(() -> {
+            final long HOUR_MILLIS = 1000 * 60 * 60;
+            if (updating.get()) {
+                updateProgress.setVisible(true);
+               // Updater.update(updateProgress);
+                updating.set(false);
+                updateButton.setText("INSTALL");
+            }
+            else {
+                final long currentTime = System.currentTimeMillis();
+                if (currentTime - start > HOUR_MILLIS) {
+                    final boolean available = Updater.updateAvailable();
+                    Platform.runLater(() -> {
+                        updateButton.setDisable(!available);
+                    });
+                    start = currentTime;
+                }
+            }
+        }, 0, delay, TimeUnit.MILLISECONDS);
         PANES.put("CLASSES", new Classes(this));
         PANES.put("PICKER", new Picker(this));
         PANES.put("GROUPER", new Group(this));
@@ -90,7 +130,7 @@ public class PrimaryController {
             }
         });
 
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+
         datePicker.valueProperty().addListener((observable, old, date) -> {
             if (old != null) {
                 save("configuration.json", old.format(formatter));
@@ -372,5 +412,27 @@ public class PrimaryController {
             classrooms.add(classroom);
         }
         return classrooms;
+    }
+
+    @FXML
+    private void update() {
+        if (updateButton.getText().equalsIgnoreCase("DOWNLOAD")) {
+            updating.set(true);
+        }
+        else {
+            final String title = "Install";
+            final String header = "Install New Version";
+            final String content = "The program must be closed in order to continue installing. Would you like to save your data and temporarily close the program to install?";
+            if (Utilities.showAlert(title, header, content, "Confirm").get() != ButtonType.CANCEL) {
+                save(CONFIG_FILE, datePicker.getValue().format(formatter));
+                App.STAGE_STACK.peek().setOnCloseRequest(null);
+                try {
+                    Runtime.getRuntime().exec("cmd /c start update.exe");
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
+                App.STAGE_STACK.peek().close();
+            }
+        }
     }
 }

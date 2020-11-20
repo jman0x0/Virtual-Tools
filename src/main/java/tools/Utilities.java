@@ -117,4 +117,8 @@ public class Utilities {
         final String sign = credit >= 0 ? "+" : "";
         return separator + sign + credit + " Credit " + timeStamp;
     }
+
+    public static int[] getCurrentVersion() {
+        return new int[]{1, 3};
+    }
 }

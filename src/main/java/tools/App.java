@@ -16,8 +16,8 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         STAGE_STACK.push(primaryStage);
-        primaryStage.setMinHeight(606.0);
-        primaryStage.setMinWidth(606.0);
+        primaryStage.setMinHeight(680.0);
+        primaryStage.setMinWidth(680.0);
         final FXMLLoader loader = new FXMLLoader(getClass().getResource("primary.fxml"));
         final Parent root = loader.load();
         primaryStage.setTitle("Virtual Tools");

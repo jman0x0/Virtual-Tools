@@ -18,6 +18,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.ProgressBar?>
 <BorderPane xmlns="http://javafx.com/javafx/8.0.171" fx:id="borderPane" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@stylesheet.css" fx:controller="tools.PrimaryController">
    <fx:define>
       <FXCollections fx:id="navigationItems" fx:factory="observableArrayList">
@@ -36,47 +37,41 @@
          <VBox alignment="TOP_CENTER" spacing="10">
             <ListView fixedCellSize="48" fx:id="navigationList" items="$navigationItems" minHeight="242" prefHeight="242"/>
          </VBox>
-         <VBox style="-fx-font-size: 1.5em" alignment="CENTER_LEFT" spacing="10">
-            <Label text="Class">
-               <VBox.margin>
-                  <Insets left="4"/>
-               </VBox.margin>
-            </Label>
-            <ComboBox fx:id="classChoices" maxWidth="Infinity">
-               <VBox.margin>
+         <HBox alignment="CENTER">
+            <Pane HBox.hgrow="ALWAYS"/>
+            <VBox style="-fx-font-size: 1.5em" alignment="CENTER_LEFT" spacing="10">
+               <Label text="Class"/>
+               <ComboBox fx:id="classChoices" maxWidth="Infinity"/>
+               <Label text="Order"/>
+               <HBox style="-fx-font-size: 1em;">
+                  <ToggleButton toggleGroup="$order" fx:id="firstLast" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                     First, Last
+                  </ToggleButton>
+                  <ToggleButton toggleGroup="$order" fx:id="lastFirst" HBox.hgrow="ALWAYS" maxWidth="Infinity" selected="true">
+                     Last, First
+                  </ToggleButton>
+               </HBox>
+               <Label text="Date"/>
+               <DatePicker fx:id="datePicker"/>
+               <HBox.margin>
                   <Insets left="6" right="6"/>
-               </VBox.margin>
-            </ComboBox>
-            <Label text="Order">
-               <VBox.margin>
-                  <Insets left="4"/>
-               </VBox.margin>
-            </Label>
-            <HBox style="-fx-font-size: 1em;">
-               <ToggleButton toggleGroup="$order" fx:id="firstLast" HBox.hgrow="ALWAYS" maxWidth="Infinity">
-                  First, Last
-                  <HBox.margin>
-                     <Insets left="6"/>
-                  </HBox.margin>
-               </ToggleButton>
-               <ToggleButton toggleGroup="$order" fx:id="lastFirst" HBox.hgrow="ALWAYS" maxWidth="Infinity" selected="true">
-                  Last, First
-                  <HBox.margin>
-                     <Insets right="6"/>
-                  </HBox.margin>
-               </ToggleButton>
-            </HBox>
-            <Label text="Date">
-               <VBox.margin>
-                  <Insets left="4"/>
-               </VBox.margin>
-            </Label>
-            <DatePicker fx:id="datePicker">
-               <VBox.margin>
-                  <Insets left="6" right="6"/>
-               </VBox.margin>
-            </DatePicker>
-         </VBox>
+               </HBox.margin>
+            </VBox>
+         </HBox>
+         <HBox>
+            <VBox.margin>
+               <Insets top="16"/>
+            </VBox.margin>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <VBox HBox.hgrow="ALWAYS">
+               <Button fx:id="updateButton" disable="true" maxWidth="Infinity" onAction="#update">
+                  UPDATE
+               </Button>
+               <ProgressBar fx:id="updateProgress" maxWidth="Infinity" progress="0" visible="false"/>
+            </VBox>
+            <Pane HBox.hgrow="ALWAYS"/>
+         </HBox>
+
          <Pane maxHeight="Infinity" VBox.vgrow="ALWAYS"/>
          <VBox alignment="CENTER">
             <Button fx:id="help" onAction="#displayHelp">
