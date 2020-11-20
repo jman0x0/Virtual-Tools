@@ -10,8 +10,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 
 
 public class Attendance extends VBox implements Refreshable {
@@ -39,9 +41,9 @@ public class Attendance extends VBox implements Refreshable {
     @FXML
     private ToggleButton absent;
 
-    private AttendanceSheet sheet;
+    private final ControllerState state = new ControllerState();
 
-    private static final ArrayList<String> NAME_LIST = new ArrayList<>();
+    private AttendanceSheet sheet;
 
     private PrimaryController controller;
 
@@ -56,45 +58,30 @@ public class Attendance extends VBox implements Refreshable {
             }
         });
 
-        if (!NAME_LIST.isEmpty()) {
-            updateNames();
-        }
         display.setEditable(true);
         final Callback<Student, ObservableValue<Boolean>> itemToBoolean = (Student student) -> {
             return sheet == null ? null : sheet.get(student);
         };
-        controller.listenToClassChange((observableValue, old, current) -> {
-            refresh();
-        });
-        controller.listenToOrderChange((observableValue, old, current) -> {
-            Utilities.sortStudents(students, controller.getOrder());
-        });
         display.setCellFactory(factory -> new StudentCell(itemToBoolean, controller));
-        listenToSheet();
-        updateNames();
     }
 
-    public Attendance(PrimaryController controller, AttendanceSheet sheet) {
+    public Attendance(PrimaryController controller) {
         this.controller = controller;
-        this.sheet = sheet;
         Utilities.loadController(this, "attendance.fxml");
     }
 
-    public void updateAttendanceSheet() {
+    public void updateAttendanceSheet(ArrayList<String> fullNames) {
         final var setting = AttendanceSheet.Filter.fromToggleGroup(filter, complete, present, absent);
         final var roster  = sheet.getRoster(AttendanceSheet.Filter.COMPLETE);
-        for (String fullName : NAME_LIST) {
+        for (String fullName : fullNames) {
             final String[] split = Utilities.extractWords(fullName);
             processName(split, roster, setting);
         }
     }
 
     public void loadAttendanceSheet(File file) {
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new FileReader(file));
-            NAME_LIST.clear();
-
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            final ArrayList<String> fullNames = new ArrayList<>();
             while (reader.ready()) {
                 final String line = reader.readLine();
                 if (line.isEmpty()) {
@@ -104,35 +91,24 @@ public class Attendance extends VBox implements Refreshable {
                 if (name.contains("(")) {
                     continue;
                 }
-                NAME_LIST.add(name);
+                fullNames.add(name);
             }
             loaded.setText(file.getPath());
-            updateAttendanceSheet();
+            updateAttendanceSheet(fullNames);
             updateNames();
         }
         catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
-                }
-            }
-        }
     }
 
     public void listenToSheet() {
-        if (sheet != null) {
-            sheet.setOnStudentMarked((student, checked) -> {
-                final var setting = AttendanceSheet.Filter.fromToggleGroup(filter, complete, present, absent);
-                if (checked && setting == AttendanceSheet.Filter.ABSENT || !checked && setting == AttendanceSheet.Filter.PRESENT) {
-                    students.remove(student);
-                }
-            });
-        }
+        sheet.setOnStudentMarked((student, checked) -> {
+            final var setting = AttendanceSheet.Filter.fromToggleGroup(filter, complete, present, absent);
+            if (checked && setting == AttendanceSheet.Filter.ABSENT || !checked && setting == AttendanceSheet.Filter.PRESENT) {
+                students.remove(student);
+            }
+        });
     }
 
     @FXML
@@ -148,30 +124,21 @@ public class Attendance extends VBox implements Refreshable {
 
     @FXML
     public void clearAll() {
-        if (sheet != null) {
-            sheet.clear();
-            updateNames();
-        }
+        sheet.clear();
+        updateNames();
     }
 
     @FXML
     public void checkAll() {
-        if (sheet != null) {
-            sheet.checkAll();
-            updateNames();
-        }
+        sheet.checkAll();
+        updateNames();
     }
 
     public void updateNames() {
         clearDisplay();
-        if (sheet == null) {
-            return;
-        }
         final var setting = AttendanceSheet.Filter.fromToggleGroup(filter, complete, present, absent);
         final var roster = sheet.getRoster(setting);
-        if (roster != null) {
-            students.addAll(roster);
-        }
+        students.addAll(roster);
     }
 
     public void clearDisplay() {
@@ -209,10 +176,32 @@ public class Attendance extends VBox implements Refreshable {
     }
 
     @Override
-    public void refresh() {
-        final var classroom = controller.getActiveClassroom();
-        sheet = classroom == null ? null : classroom.getAttendanceSheet();
+    public void processChanges(EnumSet<ControllerState.Change> changes) {
+        final Classroom classroom = controller.getActiveClassroom();
+        sheet = classroom.getAttendanceSheet();
         listenToSheet();
         updateNames();
+    }
+
+    @Override
+    public void classChanged(Classroom classroom) {
+        sheet = classroom.getAttendanceSheet();
+        listenToSheet();
+        updateNames();
+    }
+
+    @Override
+    public void orderChanged(PrimaryController.Order order) {
+        Utilities.sortStudents(students, controller.getOrder());
+    }
+
+    @Override
+    public void dateChanged(LocalDate date) {
+
+    }
+
+    @Override
+    public ControllerState getControllerState() {
+        return state;
     }
 }

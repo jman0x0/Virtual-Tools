@@ -52,7 +52,7 @@
     </HBox>
     <VBox VBox.vgrow="ALWAYS">
         <HBox spacing="8" alignment="TOP_RIGHT" VBox.vgrow="NEVER">
-            <Button styleClass="iconButton" onAction="#increment">
+            <Button fx:id="add" styleClass="iconButton" onAction="#addCredit">
                 <graphic>
                     <ImageView>
                         <image>
@@ -61,7 +61,7 @@
                     </ImageView>
                 </graphic>
             </Button>
-            <Button styleClass="iconButton" onAction="#decrement">
+            <Button fx:id="minus" styleClass="iconButton" onAction="#subtractCredit">
                 <graphic>
                     <ImageView>
                         <image>

@@ -1,5 +1,6 @@
 package tools;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -17,6 +18,9 @@ public class LoadFiles extends BorderPane implements SubWindow {
     private Button dropBox;
 
     @FXML
+    private Button cancel;
+
+    @FXML
     private TextField field;
 
     private File[] files;
@@ -28,6 +32,7 @@ public class LoadFiles extends BorderPane implements SubWindow {
     @FXML
     private void initialize() {
         Draggable.initialize(dropBox);
+        Platform.runLater(() -> cancel.requestFocus());
         dropBox.setOnDragDropped(this::dragDropped);
     }
 

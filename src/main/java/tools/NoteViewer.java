@@ -11,10 +11,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.util.Duration;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 public class NoteViewer {
     @FXML
     private Spinner<Integer> creditField;
@@ -127,10 +123,8 @@ public class NoteViewer {
     }
 
     public void creditStudent(Student student, Integer credit) {
-        final String timeStamp = Utilities.getTimeStamp();
-        final String separator = noteArea.getText().isEmpty() ? "" : "\n";
-        final String sign = credit >= 0 ? "+" : "";
-        noteArea.setText(noteArea.getText() + separator + sign + credit + " Credit " + timeStamp);
+        final String stamp = Utilities.getCreditStamp(credit, noteArea.getText().isEmpty());
+        noteArea.setText(noteArea.getText() + stamp);
     }
 
     @FXML

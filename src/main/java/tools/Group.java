@@ -5,10 +5,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.function.Function;
 
 public class Group extends VBox implements Refreshable {
@@ -63,22 +61,17 @@ public class Group extends VBox implements Refreshable {
     @FXML
     private CheckBox balance;
 
+    private final ControllerState state = new ControllerState();
+
     private final PrimaryController controller;
 
     public Group(PrimaryController controller) {
         this.controller = controller;
         Utilities.loadController(this, "group.fxml");
-        controller.listenToClassChange((observable, old, current) -> {
-            refreshTable();
-        });
-        controller.listenToOrderChange((observableValue, toggle, t1) -> {
-            groups.refresh();
-        });
     }
 
     @FXML
     protected void initialize() {
-        refreshMaximum();
         groups.setEditable(true);
         studentCount.valueProperty().addListener((observable, old, current) -> {
             refreshTable();
@@ -91,9 +84,6 @@ public class Group extends VBox implements Refreshable {
 
     protected void refreshMaximum() {
         final String active = controller.getActiveClass();
-        if (active == null) {
-            return;
-        }
         final int count = controller.getActiveClassroom().size();
         final int maxStudents = count / 2 + count % 2;
         final int studentValue = studentCount.getValue();
@@ -142,15 +132,13 @@ public class Group extends VBox implements Refreshable {
     }
 
     private ArrayList<Student> getActiveStudents() {
-        final var classroom = controller.getActiveClassroom();
-        if (classroom == null) {
-            return new ArrayList<>();
-        }
+        final Classroom classroom = controller.getActiveClassroom();
+
         if (!present.isSelected()) {
-            return controller.getActiveClassroom().getAttendanceSheet().getRoster(AttendanceSheet.Filter.COMPLETE);
+            return classroom.getAttendanceSheet().getRoster(AttendanceSheet.Filter.COMPLETE);
         }
         else {
-            return controller.getActiveClassroom().getAttendanceSheet().getRoster(AttendanceSheet.Filter.PRESENT);
+            return classroom.getAttendanceSheet().getRoster(AttendanceSheet.Filter.PRESENT);
         }
     }
 
@@ -236,7 +224,22 @@ public class Group extends VBox implements Refreshable {
     }
 
     @Override
-    public void refresh() {
+    public void classChanged(Classroom classroom) {
+        refreshTable();
+    }
 
+    @Override
+    public void orderChanged(PrimaryController.Order order) {
+        groups.refresh();
+    }
+
+    @Override
+    public void dateChanged(LocalDate date) {
+
+    }
+
+    @Override
+    public ControllerState getControllerState() {
+        return state;
     }
 }

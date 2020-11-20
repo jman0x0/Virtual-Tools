@@ -6,6 +6,7 @@ import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
@@ -15,6 +16,7 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Stack;
 
@@ -40,6 +42,14 @@ public class Picker extends StackPane implements Refreshable {
     @FXML
     private Label notification;
 
+    @FXML
+    private Button add;
+
+    @FXML
+    private Button minus;
+
+    private final ControllerState state = new ControllerState();
+
     private Student student = null;
 
     private Stack<Student> shuffle = new Stack<>();
@@ -55,14 +65,7 @@ public class Picker extends StackPane implements Refreshable {
     public Picker(PrimaryController controller) {
         this.controller = controller;
         Utilities.loadController(this, "picker.fxml");
-        controller.listenToClassChange((observableValue, s, t1) -> {
-            restock();
-        });
-        controller.listenToOrderChange((observableValue, toggle, t1) -> {
-            picked.setText(Utilities.reverseName(picked.getText()));
-        });
         final FXMLLoader loader = new FXMLLoader(getClass().getResource("note_viewer.fxml"));
-
         try {
             noteModel = loader.load();
             noteModel.setManaged(false);
@@ -77,6 +80,8 @@ public class Picker extends StackPane implements Refreshable {
         heightProperty().addListener((observableValue, number, t1) -> {
             noteModel.resize(250, t1.doubleValue());
         });
+        add.setDisable(true);
+        minus.setDisable(true);
     }
 
     @FXML
@@ -85,7 +90,6 @@ public class Picker extends StackPane implements Refreshable {
             restock();
         });
         gifView.setPathway("confetti/confetti-");
-
     }
 
     @FXML
@@ -141,19 +145,19 @@ public class Picker extends StackPane implements Refreshable {
     private void finalizePick() {
         if (animation.isSelected()) {
             gifView.play();
-            gifView.setScaleX(1.25);
+            gifView.setScaleX(1.34);
             gifView.setLayoutX(hat.getLayoutX() - hat.getImage().getWidth());
-            gifView.setLayoutY(-hat.getImage().getHeight());
+            gifView.setLayoutY(-hat.getImage().getHeight() + 40);
         }
         setStudent(fetchStudent());
         animating = false;
     }
 
     private Student fetchStudent() {
-        final var classroom = controller.getActiveClassroom();
-        if ((shuffle.isEmpty() && !restock()) || classroom == null) {
+        if (shuffle.isEmpty() && !restock()) {
             return null;
         }
+        final Classroom classroom = controller.getActiveClassroom();
         final AttendanceSheet attendance = classroom.getAttendanceSheet();
         final boolean presentOnly = present.isSelected();
         while (!shuffle.isEmpty()) {
@@ -167,11 +171,7 @@ public class Picker extends StackPane implements Refreshable {
     }
 
     private boolean restock() {
-        final var classroom = controller.getActiveClassroom();
-        if (classroom == null) {
-            return false;
-        }
-
+        final Classroom classroom = controller.getActiveClassroom();
         if (!present.isSelected()) {
             shuffle.addAll(classroom.getStudents());
         }
@@ -184,6 +184,8 @@ public class Picker extends StackPane implements Refreshable {
 
     private void setStudent(Student student) {
         this.student = student;
+        add.setDisable(student == null);
+        minus.setDisable(student == null);
         if (student == null) {
             picked.setText("*NO STUDENT*");
         }
@@ -195,7 +197,7 @@ public class Picker extends StackPane implements Refreshable {
         }
 
         final Classroom classroom = controller.getActiveClassroom();
-        if (noteViewer != null && classroom != null) {
+        if (noteViewer != null) {
             noteViewer.setStudentAndBook(this.student, classroom.getNotebook());
         }
         notification.setText(null);
@@ -216,8 +218,7 @@ public class Picker extends StackPane implements Refreshable {
 
     @FXML
     private void noteStudent() {
-        final Classroom classroom = controller.getActiveClassroom();
-        if (classroom == null || student == null) {
+        if (student == null) {
             return;
         }
         final Notebook notebook = controller.getActiveClassroom().getNotebook();
@@ -236,7 +237,22 @@ public class Picker extends StackPane implements Refreshable {
     }
 
     @Override
-    public void refresh() {
+    public void classChanged(Classroom classroom) {
+        restock();
+    }
 
+    @Override
+    public void orderChanged(PrimaryController.Order order) {
+        picked.setText(Utilities.reverseName(picked.getText()));
+    }
+
+    @Override
+    public void dateChanged(LocalDate date) {
+
+    }
+
+    @Override
+    public ControllerState getControllerState() {
+        return state;
     }
 }

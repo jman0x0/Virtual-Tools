@@ -3,7 +3,7 @@ package tools;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
@@ -12,8 +12,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
-import java.util.function.Consumer;
 
 public class Classes extends BorderPane implements Refreshable {
     @FXML
@@ -27,6 +27,15 @@ public class Classes extends BorderPane implements Refreshable {
 
     @FXML
     private ObservableList<String> classes;
+
+    @FXML
+    private Button moveUp;
+
+    @FXML
+    private Button moveDown;
+
+    @FXML
+    private Button add;
 
     private final ListChangeListener<String> classListener = new ListChangeListener<>() {
         @Override
@@ -42,6 +51,8 @@ public class Classes extends BorderPane implements Refreshable {
             }
         }
     };
+
+    private final ControllerState state = new ControllerState();
 
     private final PrimaryController controller;
 
@@ -81,15 +92,14 @@ public class Classes extends BorderPane implements Refreshable {
             updateStudents();
         });
 
-        controller.listenToOrderChange((observableValue, toggle, t1) -> {
-            updateStudents();
-        });
         classes.addListener(classListener);
         classes.addAll(controller.getClassSet());
         if (!classes.isEmpty() && classDisplay.getSelectionModel().getSelectedItem() == null) {
             classDisplay.getSelectionModel().select(0);
         }
-
+        add.disableProperty().bind(classDisplay.getSelectionModel().selectedItemProperty().isNull());
+        moveUp.disableProperty().bind(classDisplay.getSelectionModel().selectedItemProperty().isNull());
+        moveDown.disableProperty().bind(classDisplay.getSelectionModel().selectedItemProperty().isNull());
     }
 
     public void loadRoster(File file) {
@@ -201,7 +211,8 @@ public class Classes extends BorderPane implements Refreshable {
     }
 
     @Override
-    public void refresh() {
+    public void refresh(PrimaryController controller) {
+        Refreshable.super.refresh(controller);
         final int selected = classDisplay.getSelectionModel().getSelectedIndex();
         final String selection = selected >= 0 ? classes.get(selected) : null;
         classes.removeListener(classListener);
@@ -212,6 +223,26 @@ public class Classes extends BorderPane implements Refreshable {
         if (position >= 0) {
             classDisplay.getSelectionModel().select(position);
         }
+    }
+
+    @Override
+    public void classChanged(Classroom classroom) {
+
+    }
+
+    @Override
+    public void orderChanged(PrimaryController.Order order) {
+        updateStudents();
+    }
+
+    @Override
+    public void dateChanged(LocalDate date) {
+
+    }
+
+    @Override
+    public ControllerState getControllerState() {
+        return state;
     }
 
     @FXML

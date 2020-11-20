@@ -1,6 +1,7 @@
 package tools;
 
-import javafx.beans.value.ChangeListener;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -23,7 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class PrimaryController {
-    enum Order {
+    public enum Order {
         FIRST_LAST,
         LAST_FIRST
     }
@@ -33,6 +34,8 @@ public class PrimaryController {
     private final String CONFIG_FILE = "configuration.json";
 
     private final HashMap<String, Node> PANES = new HashMap<>();
+
+    private final BooleanProperty classesOnly = new SimpleBooleanProperty(true);
 
     @FXML
     private ToggleGroup order;
@@ -60,19 +63,33 @@ public class PrimaryController {
         PANES.put("CLASSES", new Classes(this));
         PANES.put("PICKER", new Picker(this));
         PANES.put("GROUPER", new Group(this));
-        PANES.put("ATTENDANCE", new Attendance(this, null));
+        PANES.put("ATTENDANCE", new Attendance(this));
         PANES.put("NOTES", new Notes(this));
-        navigationList.setCellFactory(cell -> new NavigationCell());
+        navigationList.setCellFactory(cell -> new NavigationCell(classesOnly));
 
         navigationList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             loadPane(newValue.getName());
         });
-
         order.selectedToggleProperty().addListener((obsVal, oldVal, newVal) -> {
             if (newVal == null) {
                 oldVal.setSelected(true);
             }
+            else if (borderPane.getCenter() instanceof Refreshable) {
+                ((Refreshable) borderPane.getCenter()).orderChanged(getOrder());
+            }
         });
+        classChoices.valueProperty().addListener((observable, old, current) -> {
+            final boolean state = current == null;
+            final boolean changed = classesOnly.get() != state;
+            classesOnly.setValue(state);
+            if (changed) {
+                navigationList.refresh();
+            }
+            if (!state && borderPane.getCenter() instanceof Refreshable) {
+                ((Refreshable) borderPane.getCenter()).classChanged(classes.get(current));
+            }
+        });
+
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         datePicker.valueProperty().addListener((observable, old, date) -> {
             if (old != null) {
@@ -91,11 +108,12 @@ public class PrimaryController {
             loadLastRoster(CONFIG_FILE);
         }
         navigationList.getSelectionModel().select(0);
+
     }
 
     @FXML
     public void displayHelp(@SuppressWarnings("unnused") ActionEvent actionEvent) {
-       HelpWindow help = new HelpWindow();
+       final HelpWindow help = new HelpWindow();
        help.display(App.STAGE_STACK.peek());
     }
 
@@ -128,14 +146,6 @@ public class PrimaryController {
 
     public void setDisplay(Node node) {
         borderPane.setCenter(node);
-    }
-
-    public void listenToClassChange(ChangeListener<? super String> listener) {
-        classChoices.valueProperty().addListener(listener);
-    }
-
-    public void listenToOrderChange(ChangeListener<? super Toggle> listener) {
-        order.selectedToggleProperty().addListener(listener);
     }
 
     public Order getOrder() {
@@ -293,7 +303,7 @@ public class PrimaryController {
 
     private void refreshPane() {
         if (borderPane.getCenter() instanceof Refreshable) {
-            ((Refreshable) borderPane.getCenter()).refresh();
+            ((Refreshable) borderPane.getCenter()).refresh(this);
         }
     }
 

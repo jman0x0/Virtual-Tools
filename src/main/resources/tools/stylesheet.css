@@ -30,6 +30,10 @@
     -fx-text-fill: White;
 }
 
+#navigationList .list-cell:disabled {
+    -fx-opacity: 0.6;
+}
+
 #navigationList .list-cell:hover {
     -fx-background-color: #5f92f1;
 }

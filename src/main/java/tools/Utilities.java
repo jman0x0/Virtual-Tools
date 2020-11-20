@@ -110,4 +110,11 @@ public class Utilities {
         final DateFormat date = new SimpleDateFormat("MM/dd/yyyy@hh:mm a");
         return date.format(Calendar.getInstance().getTime());
     }
+
+    public static String getCreditStamp(int credit, boolean newline) {
+        final String timeStamp = Utilities.getTimeStamp();
+        final String separator = newline ? "" : "\n";
+        final String sign = credit >= 0 ? "+" : "";
+        return separator + sign + credit + " Credit " + timeStamp;
+    }
 }

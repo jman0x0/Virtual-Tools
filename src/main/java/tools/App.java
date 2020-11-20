@@ -40,7 +40,7 @@ public class App extends Application {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream("error_log.txt");
-            System.setErr(new PrintStream(fos));
+            //System.setErr(new PrintStream(fos));
         }
         catch (FileNotFoundException ignored) {
 

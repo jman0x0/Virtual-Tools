@@ -35,7 +35,7 @@
                             </graphic>
                         </Button>
                         <Pane HBox.hgrow="ALWAYS"/>
-                        <Button styleClass="iconButton" maxWidth="Infinity" onAction="#moveUp">
+                        <Button styleClass="iconButton" fx:id="moveUp" maxWidth="Infinity" onAction="#moveUp">
                             <graphic>
                                 <ImageView>
                                     <image>
@@ -44,7 +44,7 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button styleClass="iconButton" maxWidth="Infinity" onAction="#moveDown">
+                        <Button styleClass="iconButton" fx:id="moveDown" maxWidth="Infinity" onAction="#moveDown">
                             <graphic>
                                 <ImageView>
                                     <image>
@@ -67,7 +67,7 @@
             <TitledPane collapsible="false" text="Students" maxWidth="Infinity" HBox.hgrow="ALWAYS" maxHeight="Infinity">
                 <VBox>
                     <ListView fx:id="studentDisplay" items="$students" VBox.vgrow="ALWAYS"/>
-                    <Button styleClass="iconButton" fx:id="addStudent" minHeight="24" onAction="#addStudent">
+                    <Button styleClass="iconButton" fx:id="add" minHeight="24" onAction="#addStudent">
                         <graphic>
                             <ImageView>
                                 <image>
