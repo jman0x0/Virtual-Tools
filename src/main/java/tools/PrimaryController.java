@@ -42,7 +42,7 @@ public class PrimaryController {
 
     private final BooleanProperty classesOnly = new SimpleBooleanProperty(true);
 
-    private final AtomicBoolean updating = new AtomicBoolean(false);
+    private final AtomicBoolean downloading = new AtomicBoolean(false);
 
     private ScheduledExecutorService updater = Executors.newSingleThreadScheduledExecutor();
 
@@ -83,20 +83,25 @@ public class PrimaryController {
 
         updater.scheduleAtFixedRate(() -> {
             final long HOUR_MILLIS = 1000 * 60 * 60;
-            if (updating.get()) {
-                updateProgress.setVisible(true);
-               // Updater.update(updateProgress);
-                updating.set(false);
-                updateButton.setText("INSTALL");
-            }
-            else {
-                final long currentTime = System.currentTimeMillis();
-                if (currentTime - start > HOUR_MILLIS) {
-                    final boolean available = Updater.updateAvailable();
+            if (!Thread.interrupted()) {
+                if (downloading.get()) {
                     Platform.runLater(() -> {
-                        updateButton.setDisable(!available);
+                        updateProgress.setVisible(true);
                     });
-                    start = currentTime;
+                    Updater.update(updateProgress);
+                    Platform.runLater(() -> {
+                        updateButton.setText("INSTALL");
+                    });
+                    downloading.set(false);
+                } else {
+                    final long currentTime = System.currentTimeMillis();
+                    if (currentTime - start > HOUR_MILLIS) {
+                        final boolean available = Updater.updateAvailable();
+                        Platform.runLater(() -> {
+                            updateButton.setDisable(!available);
+                        });
+                        start = currentTime;
+                    }
                 }
             }
         }, 0, delay, TimeUnit.MILLISECONDS);
@@ -141,6 +146,15 @@ public class PrimaryController {
             }
         });
         App.STAGE_STACK.peek().setOnCloseRequest(windowEvent -> {
+            if (downloading.get()) {
+                final String title = "Close";
+                final String header = "Download in progress...";
+                final String content = "Would you like to stop downloading the latest version of VirtualTools and update later?";
+                if (Utilities.showAlert(title, header, content, "Confirm").get() == ButtonType.CANCEL) {
+                    windowEvent.consume();
+                    return;
+                }
+            }
             save(CONFIG_FILE, datePicker.getValue().format(formatter));
         });
         datePicker.setValue(LocalDate.now());
@@ -293,6 +307,18 @@ public class PrimaryController {
         return classrooms;
     }
 
+    public void shutdown() {
+        updater.shutdown();
+        try {
+            // Wait a while for existing tasks to terminate
+            if (!updater.awaitTermination(1, TimeUnit.SECONDS)) {
+                updater.shutdownNow();
+            }
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
+        }
+    }
+
     public void save(String fileName, String date) {
         FileWriter writer = null;
         try {
@@ -416,8 +442,8 @@ public class PrimaryController {
 
     @FXML
     private void update() {
-        if (updateButton.getText().equalsIgnoreCase("DOWNLOAD")) {
-            updating.set(true);
+        if (updateButton.getText().equalsIgnoreCase("UPDATE")) {
+            downloading.set(true);
         }
         else {
             final String title = "Install";
@@ -427,7 +453,7 @@ public class PrimaryController {
                 save(CONFIG_FILE, datePicker.getValue().format(formatter));
                 App.STAGE_STACK.peek().setOnCloseRequest(null);
                 try {
-                    Runtime.getRuntime().exec("cmd /c start update.exe");
+                    Runtime.getRuntime().exec("cmd /c start VirtualToolsUpdater.exe latest.zip unpacked jlink_vtools_jre");
                 } catch (IOException ioe) {
                     ioe.printStackTrace();
                 }

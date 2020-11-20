@@ -12,7 +12,7 @@ import java.util.Stack;
 
 public class App extends Application {
     public static final Stack<Stage> STAGE_STACK = new Stack<>();
-
+    private static PrimaryController primary = null;
     @Override
     public void start(Stage primaryStage) throws IOException {
         STAGE_STACK.push(primaryStage);
@@ -23,6 +23,7 @@ public class App extends Application {
         primaryStage.setTitle("Virtual Tools");
         primaryStage.getIcons().addAll(new Image(getClass().getResourceAsStream("tools.png")));
         primaryStage.setScene(new Scene(root, 910, 0));
+        primary = loader.getController();
         primaryStage.show();
     }
 
@@ -40,7 +41,7 @@ public class App extends Application {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream("error_log.txt");
-            System.setErr(new PrintStream(fos));
+            //System.setErr(new PrintStream(fos));
         }
         catch (FileNotFoundException ignored) {
 
@@ -48,6 +49,9 @@ public class App extends Application {
         finally {
             launch();
             closeQuietly(fos);
+            if (primary != null) {
+                primary.shutdown();
+            }
         }
     }
 }

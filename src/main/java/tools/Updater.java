@@ -46,10 +46,10 @@ public class Updater {
     }
 
     public static JSONObject getLatestVersion() {
-        HttpURLConnection connection = null;
+        HttpsURLConnection connection = null;
         try {
             final URL url = new URL("https://api.github.com/repos/jman0x0/Virtual-Tools/releases");
-            connection = (HttpURLConnection)url.openConnection();
+            connection = (HttpsURLConnection)url.openConnection();
             try (InputStream inputStream = connection.getInputStream()) {
                 final String data = new String(inputStream.readAllBytes());
                 final JSONArray content = new JSONArray(data);
@@ -67,27 +67,33 @@ public class Updater {
     }
 
     private static boolean downloadLatest(ProgressBar progress, String resourceUrl, String output) {
+        final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         try {
             final URL download = new URL(resourceUrl);
             final long bytes = getFileSize(download);
-            final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
             executor.scheduleAtFixedRate(() -> {
                 final File file = new File(output);
-                if (file.exists()) {
+                if (!Thread.interrupted() && file.exists() && file.length() < bytes) {
                     Platform.runLater(() -> {
                         progress.setProgress(file.length() / (double)bytes);
                     });
                 }
             }, 0, 16, TimeUnit.MILLISECONDS);
+
             try(final InputStream inputStream = download.openStream();
                 final ReadableByteChannel rbc = Channels.newChannel(inputStream);
                 final FileOutputStream fos = new FileOutputStream(output)) {
                 fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-
                 return true;
             }
         } catch (IOException ioe) {
             ioe.printStackTrace();
+        } finally {
+            executor.shutdown();
+            if (Thread.interrupted()) {
+                final File file = new File(output);
+                file.delete();
+            }
         }
         return false;
     }

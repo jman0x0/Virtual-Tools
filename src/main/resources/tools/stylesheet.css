@@ -47,30 +47,22 @@
     -fx-text-fill: black;
 }
 
-#navigation .label {
+#navigation #controls .label {
     -fx-text-fill: White;
 }
 
-#navigation > * > * > .toggle-button,
+#navigation #controls .toggle-button,
 .combo-box {
     -fx-background-color: #e1ecfd;
 }
 
-#navigation > * > * > .toggle-button:hover,
+#navigation #controls .toggle-button:hover,
 .combo-box:hover {
     -fx-background-color: #cbd9fd;
 }
 
-#navigation > * > * > .toggle-button:selected {
+#navigation #controls .toggle-button:selected {
     -fx-background-color: linear-gradient(#bbcdfc, #849bd5);
-}
-
-.toggle-button {
-
-}
-
-.toggle-button:selected {
-
 }
 
 .list-cell .label {

@@ -119,6 +119,6 @@ public class Utilities {
     }
 
     public static int[] getCurrentVersion() {
-        return new int[]{1, 3};
+        return new int[]{1, 5, 0};
     }
 }

@@ -37,7 +37,7 @@
          <VBox alignment="TOP_CENTER" spacing="10">
             <ListView fixedCellSize="48" fx:id="navigationList" items="$navigationItems" minHeight="242" prefHeight="242"/>
          </VBox>
-         <HBox alignment="CENTER">
+         <HBox alignment="CENTER" id="controls">
             <Pane HBox.hgrow="ALWAYS"/>
             <VBox style="-fx-font-size: 1.5em" alignment="CENTER_LEFT" spacing="10">
                <Label text="Class"/>
