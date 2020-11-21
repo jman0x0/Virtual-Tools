@@ -47,7 +47,7 @@
     -fx-text-fill: black;
 }
 
-#navigation #controls .label {
+#navigation #controls > .label {
     -fx-text-fill: White;
 }
 

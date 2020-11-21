@@ -8,6 +8,8 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import tools.json.JSONArray;
 import tools.json.JSONException;
 import tools.json.JSONObject;
@@ -60,7 +62,10 @@ public class PrimaryController {
     private ToggleButton lastFirst;
 
     @FXML
-    public BorderPane borderPane;
+    public SplitPane splitPane;
+
+    @FXML
+    public StackPane content;
 
     @FXML
     private ListView<NavigationData> navigationList;
@@ -79,32 +84,7 @@ public class PrimaryController {
 
     @FXML
     protected void initialize() {
-        final long delay = 16;
-
-        updater.scheduleAtFixedRate(() -> {
-            final long HOUR_MILLIS = 1000 * 60 * 60;
-            if (!Thread.interrupted()) {
-                if (downloading.get()) {
-                    Platform.runLater(() -> {
-                        updateProgress.setVisible(true);
-                    });
-                    Updater.update(updateProgress);
-                    Platform.runLater(() -> {
-                        updateButton.setText("INSTALL");
-                    });
-                    downloading.set(false);
-                } else {
-                    final long currentTime = System.currentTimeMillis();
-                    if (currentTime - start > HOUR_MILLIS) {
-                        final boolean available = Updater.updateAvailable();
-                        Platform.runLater(() -> {
-                            updateButton.setDisable(!available);
-                        });
-                        start = currentTime;
-                    }
-                }
-            }
-        }, 0, delay, TimeUnit.MILLISECONDS);
+        pollUpdates();
         PANES.put("CLASSES", new Classes(this));
         PANES.put("PICKER", new Picker(this));
         PANES.put("GROUPER", new Group(this));
@@ -119,8 +99,8 @@ public class PrimaryController {
             if (newVal == null) {
                 oldVal.setSelected(true);
             }
-            else if (borderPane.getCenter() instanceof Refreshable) {
-                ((Refreshable) borderPane.getCenter()).orderChanged(getOrder());
+            else if (getContent() instanceof Refreshable) {
+                ((Refreshable) getContent()).orderChanged(getOrder());
             }
         });
         classChoices.valueProperty().addListener((observable, old, current) -> {
@@ -130,8 +110,8 @@ public class PrimaryController {
             if (changed) {
                 navigationList.refresh();
             }
-            if (!state && borderPane.getCenter() instanceof Refreshable) {
-                ((Refreshable) borderPane.getCenter()).classChanged(classes.get(current));
+            if (!state && getContent() instanceof Refreshable) {
+                ((Refreshable) getContent()).classChanged(classes.get(current));
             }
         });
 
@@ -162,7 +142,40 @@ public class PrimaryController {
             loadLastRoster(CONFIG_FILE);
         }
         navigationList.getSelectionModel().select(0);
+        splitPane.widthProperty().addListener((observableValue, old, current) -> {
+            final double ratio = old.doubleValue() / current.doubleValue();
+            final double divider = splitPane.getDividerPositions()[0];
+            splitPane.setDividerPosition(0, divider * ratio);
+        });
+    }
 
+    private void pollUpdates() {
+        final long delay = 16;
+
+        updater.scheduleAtFixedRate(() -> {
+            final long HOUR_MILLIS = 1000 * 60 * 60;
+            if (!Thread.interrupted()) {
+                if (downloading.get()) {
+                    Platform.runLater(() -> {
+                        updateProgress.setVisible(true);
+                    });
+                    Updater.update(updateProgress);
+                    Platform.runLater(() -> {
+                        updateButton.setText("INSTALL");
+                    });
+                    downloading.set(false);
+                } else {
+                    final long currentTime = System.currentTimeMillis();
+                    if (currentTime - start > HOUR_MILLIS) {
+                        final boolean available = Updater.updateAvailable();
+                        Platform.runLater(() -> {
+                            updateButton.setDisable(!available);
+                        });
+                        start = currentTime;
+                    }
+                }
+            }
+        }, 0, delay, TimeUnit.MILLISECONDS);
     }
 
     @FXML
@@ -190,16 +203,12 @@ public class PrimaryController {
     }
 
     public void loadPane(String pane) {
-        borderPane.setCenter(PANES.get(pane.toUpperCase()));
+        setContent(PANES.get(pane.toUpperCase()));
         refreshPane();
     }
 
     public Classroom addClass(String name) {
         return addClass(name, new Classroom(name));
-    }
-
-    public void setDisplay(Node node) {
-        borderPane.setCenter(node);
     }
 
     public Order getOrder() {
@@ -368,9 +377,18 @@ public class PrimaryController {
     }
 
     private void refreshPane() {
-        if (borderPane.getCenter() instanceof Refreshable) {
-            ((Refreshable) borderPane.getCenter()).refresh(this);
+        if (getContent() instanceof Refreshable) {
+            ((Refreshable) getContent()).refresh(this);
         }
+    }
+
+    private void setContent(Node node) {
+        content.getChildren().clear();
+        content.getChildren().add(node);
+    }
+
+    private Node getContent() {
+        return content.getChildren().isEmpty() ? null : content.getChildren().get(0);
     }
 
     private void loadLastRoster(String fileName) {
