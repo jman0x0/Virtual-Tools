@@ -7,8 +7,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import tools.json.JSONArray;
 import tools.json.JSONException;
@@ -104,17 +102,15 @@ public class PrimaryController {
             }
         });
         classChoices.valueProperty().addListener((observable, old, current) -> {
-            final boolean state = current == null;
-            final boolean changed = classesOnly.get() != state;
-            classesOnly.setValue(state);
-            if (changed) {
-                navigationList.refresh();
+            if (current == null) {
+                navigationList.getSelectionModel().select(0);
             }
-            if (!state && getContent() instanceof Refreshable) {
+            else if (getContent() instanceof Refreshable) {
                 ((Refreshable) getContent()).classChanged(classes.get(current));
             }
         });
-
+        classesOnly.bind(classChoices.valueProperty().isNull());
+        classesOnly.addListener((observableValue, old, filter) -> navigationList.refresh());
 
         datePicker.valueProperty().addListener((observable, old, date) -> {
             if (old != null) {
@@ -159,10 +155,15 @@ public class PrimaryController {
                     Platform.runLater(() -> {
                         updateProgress.setVisible(true);
                     });
-                    Updater.update(updateProgress);
-                    Platform.runLater(() -> {
-                        updateButton.setText("INSTALL");
-                    });
+                    final String output = "latest.zip";
+                    if (Updater.download(updateProgress, output)) {
+                        Platform.runLater(() -> {
+                            updateButton.setText("INSTALL");
+                        });
+                    }
+                    else {
+                        System.err.println("ERROR: Couldn't download the latest version.");
+                    }
                     downloading.set(false);
                 } else {
                     final long currentTime = System.currentTimeMillis();

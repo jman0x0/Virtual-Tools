@@ -29,7 +29,7 @@ public class Updater {
         return Arrays.compare(current, newest) < 0;
     }
 
-    public static boolean update(ProgressBar progress) {
+    public static boolean download(ProgressBar progress, String output) {
         final JSONObject latest = getLatestVersion();
         final JSONArray assets = latest.getJSONArray("assets");
         final Iterator<Object> iterator = assets.iterator();
@@ -39,7 +39,7 @@ public class Updater {
             final String name = jsonObject.getString("name");
             if (name.endsWith(".zip")) {
                 final String resourceUrl = jsonObject.getString("browser_download_url");
-                return downloadLatest(progress, resourceUrl, "latest.zip");
+                return downloadLatest(progress, resourceUrl, output);
             }
         }
         return false;
@@ -73,7 +73,7 @@ public class Updater {
             final long bytes = getFileSize(download);
             executor.scheduleAtFixedRate(() -> {
                 final File file = new File(output);
-                if (!Thread.interrupted() && file.exists() && file.length() < bytes) {
+                if (file.exists() && file.length() < bytes) {
                     Platform.runLater(() -> {
                         progress.setProgress(file.length() / (double)bytes);
                     });
@@ -90,9 +90,18 @@ public class Updater {
             ioe.printStackTrace();
         } finally {
             executor.shutdown();
+            try {
+                if (!executor.awaitTermination(100, TimeUnit.MILLISECONDS)) {
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException ie) {
+                ie.printStackTrace();
+            }
             if (Thread.interrupted()) {
                 final File file = new File(output);
-                file.delete();
+                if (!file.delete()) {
+                    System.err.println("Partially downloaded ZIP of new version couldn't be deleted.");
+                }
             }
         }
         return false;
