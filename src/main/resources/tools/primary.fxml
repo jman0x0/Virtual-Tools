@@ -20,6 +20,7 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.ScrollPane?>
 <SplitPane xmlns="http://javafx.com/javafx/8.0.171" fx:id="splitPane" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@stylesheet.css" fx:controller="tools.PrimaryController">
    <fx:define>
       <FXCollections fx:id="navigationItems" fx:factory="observableArrayList">
@@ -34,7 +35,8 @@
       <Integer fx:value="40" fx:id="iconWidth"/>
    </fx:define>
    <items>
-      <VBox fx:id="navigation" prefWidth="$navigationWidth" spacing="10" minWidth="190" maxHeight="Infinity">
+
+      <VBox fx:id="navigation" prefWidth="$navigationWidth" spacing="10" minWidth="$navigationWidth" maxHeight="Infinity">
          <VBox alignment="TOP_CENTER" spacing="10">
             <ListView fixedCellSize="48" fx:id="navigationList" items="$navigationItems" minHeight="242" prefHeight="242"/>
          </VBox>
@@ -86,6 +88,7 @@
             </Button>
          </VBox>
       </VBox>
+
       <StackPane fx:id="content" maxWidth="Infinity" maxHeight="Infinity"/>
    </items>
 </SplitPane>

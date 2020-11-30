@@ -16,13 +16,14 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         STAGE_STACK.push(primaryStage);
-        primaryStage.setMinHeight(680.0);
-        primaryStage.setMinWidth(680.0);
+        final double minimumSize = 670.0;
+        primaryStage.setMinHeight(minimumSize);
+        primaryStage.setMinWidth(minimumSize);
         final FXMLLoader loader = new FXMLLoader(getClass().getResource("primary.fxml"));
         final Parent root = loader.load();
         primaryStage.setTitle("Virtual Tools");
         primaryStage.getIcons().addAll(new Image(getClass().getResourceAsStream("tools.png")));
-        primaryStage.setScene(new Scene(root, 910, 0));
+        primaryStage.setScene(new Scene(root, 900, 0));
         primary = loader.getController();
         primaryStage.show();
     }

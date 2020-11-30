@@ -160,6 +160,7 @@ public class Picker extends StackPane implements Refreshable {
         final Classroom classroom = controller.getActiveClassroom();
         final AttendanceSheet attendance = classroom.getAttendanceSheet();
         final boolean presentOnly = present.isSelected();
+
         while (!shuffle.isEmpty()) {
             final Student student = shuffle.pop();
 
@@ -172,6 +173,7 @@ public class Picker extends StackPane implements Refreshable {
 
     private boolean restock() {
         final Classroom classroom = controller.getActiveClassroom();
+        shuffle.clear();
         if (!present.isSelected()) {
             shuffle.addAll(classroom.getStudents());
         }
@@ -207,7 +209,7 @@ public class Picker extends StackPane implements Refreshable {
         if (student == null) {
             return;
         }
-        noteViewer.creditStudent(student, value);
+        noteViewer.creditStudent(value);
         if (controller.getOrder() == PrimaryController.Order.FIRST_LAST) {
             notification.setText(value + " point to " + student.getFirstLast());
         }

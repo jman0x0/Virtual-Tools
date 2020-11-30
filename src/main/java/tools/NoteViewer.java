@@ -122,15 +122,16 @@ public class NoteViewer {
         }
     }
 
-    public void creditStudent(Student student, Integer credit) {
-        final String stamp = Utilities.getCreditStamp(credit, noteArea.getText().isEmpty());
-        noteArea.setText(noteArea.getText() + stamp);
+    public void creditStudent(Integer credit) {
+        final String notes = notebook.getNote(student);
+        final String stamp = Utilities.getCreditStamp(credit, notes.isEmpty());
+        noteArea.setText(notes + stamp);
     }
 
     @FXML
     private void credit(ActionEvent actionEvent) {
         if (notebook != null && student != null) {
-            creditStudent(student, creditField.getValue());
+            creditStudent(creditField.getValue());
         }
     }
 }

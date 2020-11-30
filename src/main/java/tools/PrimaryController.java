@@ -102,15 +102,17 @@ public class PrimaryController {
             }
         });
         classChoices.valueProperty().addListener((observable, old, current) -> {
-            if (current == null) {
-                navigationList.getSelectionModel().select(0);
-            }
-            else if (getContent() instanceof Refreshable) {
+            if (getContent() instanceof Refreshable) {
                 ((Refreshable) getContent()).classChanged(classes.get(current));
             }
         });
         classesOnly.bind(classChoices.valueProperty().isNull());
-        classesOnly.addListener((observableValue, old, filter) -> navigationList.refresh());
+        classesOnly.addListener((observableValue, old, filter) -> {
+            if (filter) {
+                navigationList.getSelectionModel().select(0);
+            }
+            navigationList.refresh();
+        });
 
         datePicker.valueProperty().addListener((observable, old, date) -> {
             if (old != null) {
@@ -118,7 +120,7 @@ public class PrimaryController {
             }
             if (date != null) {
                 load("configuration.json", date.format(formatter));
-                refreshPane();
+                refreshContent();
             }
         });
         App.STAGE_STACK.peek().setOnCloseRequest(windowEvent -> {
@@ -181,8 +183,8 @@ public class PrimaryController {
 
     @FXML
     public void displayHelp(@SuppressWarnings("unnused") ActionEvent actionEvent) {
-       final HelpWindow help = new HelpWindow();
-       help.display(App.STAGE_STACK.peek());
+        final HelpWindow help = new HelpWindow();
+        help.display(App.STAGE_STACK.peek());
     }
 
     public Set<String> getClassSet() {
@@ -205,7 +207,7 @@ public class PrimaryController {
 
     public void loadPane(String pane) {
         setContent(PANES.get(pane.toUpperCase()));
-        refreshPane();
+        refreshContent();
     }
 
     public Classroom addClass(String name) {
@@ -377,7 +379,7 @@ public class PrimaryController {
         }
     }
 
-    private void refreshPane() {
+    private void refreshContent() {
         if (getContent() instanceof Refreshable) {
             ((Refreshable) getContent()).refresh(this);
         }

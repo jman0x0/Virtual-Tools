@@ -229,7 +229,10 @@ public class Notes extends VBox implements Refreshable {
         if (noteArea.isDisabled()) {
             return;
         }
-        final String stamp = Utilities.getCreditStamp(credit, noteArea.getText().isEmpty());
+        final Classroom classroom = controller.getActiveClassroom();
+        final Student student = studentList.getSelectionModel().getSelectedItem();
+        final String notes = classroom.getNotebook().getNote(student);
+        final String stamp = Utilities.getCreditStamp(credit, notes.isEmpty());
         noteArea.setText(noteArea.getText() + stamp);
     }
 
